@@ -146,13 +146,6 @@ Optimized Text
 
 # Installation
 
-## Clone Repository
-
-```bash
-git clone https://github.com/yourusername/gec_project.git
-
-cd gec_project
-```
 
 ## Install Requirements
 
@@ -271,11 +264,9 @@ Response:
 
 ## Local Development
 
-Expose the API with ngrok:
+Expose the API with ngrok
 
-```bash
-ngrok http 8000
-```
+
 
 Example:
 
