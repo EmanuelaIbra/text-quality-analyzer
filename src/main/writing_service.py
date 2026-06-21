@@ -1,13 +1,13 @@
 import spacy
 
-from pages.corrector import GrammarCorrector
-from pages.evaluator import GrammarEvaluator
-from pages.repetition_analyzer import RepetitionAnalyzer
-from pages.text_redundancy_checker import (
+from gec_project.src.main.pages.corrector import GrammarCorrector
+from gec_project.src.main.pages.evaluator import GrammarEvaluator
+from gec_project.src.main.pages.repetition_analyzer import RepetitionAnalyzer
+from gec_project.src.main.pages.text_redundancy_checker import (
     analyze_text,
     apply_pleonasm_replacements,
 )
-from pages.text_rewriter import TextRewriter
+from gec_project.src.main.pages.text_rewriter import TextRewriter
 
 
 class WritingService:

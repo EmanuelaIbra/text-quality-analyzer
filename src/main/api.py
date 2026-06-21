@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from writing_service import WritingService
+from gec_project.src.main.writing_service import WritingService
 
 
 app = FastAPI()

@@ -1,5 +1,5 @@
-from writing_service import WritingService
-from pages.text_redundancy_checker import print_report
+from gec_project.src.main.writing_service import WritingService
+from gec_project.src.main.pages.text_redundancy_checker import print_report
 
 
 def main():
