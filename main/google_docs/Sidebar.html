@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 12px;
+      }
+
+      button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 8px;
+        cursor: pointer;
+      }
+
+      select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 8px;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 120px;
+        margin-top: 8px;
+      }
+
+      .section {
+        margin-top: 16px;
+        padding-top: 10px;
+        border-top: 1px solid #ddd;
+      }
+
+      .label {
+        font-weight: bold;
+        margin-top: 8px;
+      }
+
+      .small {
+        font-size: 12px;
+        color: #555;
+        white-space: pre-wrap;
+      }
+
+      .error {
+        color: red;
+        font-weight: bold;
+      }
+
+      .success {
+        color: green;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h3>AI Writing Assistant</h3>
+
+    <label class="label">Mode</label>
+    <select id="mode">
+      <option value="concise">Concise</option>
+      <option value="standard">Standard</option>
+      <option value="academic">Academic</option>
+      <option value="fluent">Fluent</option>
+    </select>
+
+    <button onclick="runAnalysis()">Analyze + Rewrite Selected Text</button>
+
+    <div id="status" class="small"></div>
+
+    <div class="section">
+      <div class="label">Original Text</div>
+      <textarea id="original" readonly></textarea>
+    </div>
+
+    <div class="section">
+      <div class="label">Analysis</div>
+      <div id="analysis" class="small"></div>
+    </div>
+
+    <div class="section">
+      <div class="label">Final Output</div>
+      <textarea id="finalText"></textarea>
+      <button onclick="acceptRewrite()">Accept and Replace Selected Text</button>
+    </div>
+
+    <script>
+      function runAnalysis() {
+        document.getElementById("status").innerHTML = "Processing...";
+        document.getElementById("status").className = "small";
+
+        const mode = document.getElementById("mode").value;
+
+        google.script.run
+          .withSuccessHandler(function(result) {
+            if (!result.success) {
+              document.getElementById("status").innerHTML = result.message;
+              document.getElementById("status").className = "error";
+              return;
+            }
+
+            document.getElementById("status").innerHTML = "Analysis complete.";
+            document.getElementById("status").className = "success";
+
+            document.getElementById("original").value = result.original;
+            document.getElementById("finalText").value = result.final;
+
+            const repetition = result.repetition_analysis || {};
+            const redundancy = result.redundancy_report || {};
+            const metrics = result.metrics || {};
+
+            document.getElementById("analysis").innerHTML =
+              "Repeated words:\n" +
+              JSON.stringify(repetition.repeated_words || {}, null, 2) +
+              "\n\nLemma repetition:\n" +
+              JSON.stringify(repetition.lemma_repetition || {}, null, 2) +
+              "\n\nSynonym repetition:\n" +
+              JSON.stringify(repetition.synonym_repetition || {}, null, 2) +
+              "\n\nPleonasms:\n" +
+              JSON.stringify(redundancy.pleonasms || [], null, 2) +
+              "\n\nSimilar words:\n" +
+              JSON.stringify(redundancy.similar_words || [], null, 2) +
+              "\n\nRedundant sentences:\n" +
+              JSON.stringify(redundancy.redundant_sentences || [], null, 2) +
+              "\n\nGrammar metrics:\n" +
+              JSON.stringify(metrics, null, 2);
+          })
+          .withFailureHandler(function(error) {
+            document.getElementById("status").innerHTML = error.message;
+            document.getElementById("status").className = "error";
+          })
+          .analyzeAndRewriteSelectedText(mode);
+      }
+
+      function acceptRewrite() {
+        const finalText = document.getElementById("finalText").value;
+
+        google.script.run
+          .withSuccessHandler(function(result) {
+            if (!result.success) {
+              document.getElementById("status").innerHTML = result.message;
+              document.getElementById("status").className = "error";
+              return;
+            }
+
+            document.getElementById("status").innerHTML = result.message;
+            document.getElementById("status").className = "success";
+          })
+          .withFailureHandler(function(error) {
+            document.getElementById("status").innerHTML = error.message;
+            document.getElementById("status").className = "error";
+          })
+          .acceptRewrite();
+      }
+    </script>
+  </body>
+</html>
