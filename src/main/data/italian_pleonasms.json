@@ -1,0 +1,957 @@
+{
+  "metadata": {
+    "title": "Pleonasmi Italiani",
+    "description": "Raccolta completa di pleonasmi della lingua italiana, organizzati per categoria. Il pleonasmo è una figura grammaticale/retorica che consiste nell'aggiunta di parole non necessarie all'interno di un'espressione già compiuta.",
+    "source": "Accademia della Crusca, linguistica italiana, uso comune",
+    "total_entries": 180
+  },
+  "categories": {
+    "verbi_di_movimento_con_avverbio": {
+      "description": "Verbi di movimento il cui significato direzionale è già incluso nel verbo stesso, ma viene ribadito da un avverbio.",
+      "examples": [
+        {
+          "pleonasmo": "salire su",
+          "forma_corretta": "salire",
+          "spiegazione": "'Salire' implica già il movimento verso l'alto; 'su' è ridondante.",
+          "uso_comune": "Salgo su in soffitta.",
+          "variante_corretta": "Salgo in soffitta."
+        },
+        {
+          "pleonasmo": "scendere giù",
+          "forma_corretta": "scendere",
+          "spiegazione": "'Scendere' implica già il movimento verso il basso.",
+          "uso_comune": "Scendo giù al piano terra.",
+          "variante_corretta": "Scendo al piano terra."
+        },
+        {
+          "pleonasmo": "entrare dentro",
+          "forma_corretta": "entrare",
+          "spiegazione": "'Entrare' implica già il movimento verso l'interno.",
+          "uso_comune": "Entra dentro casa.",
+          "variante_corretta": "Entra in casa."
+        },
+        {
+          "pleonasmo": "uscire fuori",
+          "forma_corretta": "uscire",
+          "spiegazione": "'Uscire' implica già il movimento verso l'esterno.",
+          "uso_comune": "Esci fuori un momento.",
+          "variante_corretta": "Esci un momento."
+        },
+        {
+          "pleonasmo": "rientrare dentro",
+          "forma_corretta": "rientrare",
+          "spiegazione": "'Rientrare' implica già il ritorno all'interno.",
+          "uso_comune": "Rientra dentro che fa freddo.",
+          "variante_corretta": "Rientra che fa freddo."
+        },
+        {
+          "pleonasmo": "ritornare indietro",
+          "forma_corretta": "ritornare / tornare",
+          "spiegazione": "'Ritornare' già significa andare di nuovo verso il punto di partenza; 'indietro' è ridondante.",
+          "uso_comune": "Siamo dovuti ritornare indietro.",
+          "variante_corretta": "Siamo dovuti tornare."
+        },
+        {
+          "pleonasmo": "tornare indietro",
+          "forma_corretta": "tornare",
+          "spiegazione": "'Tornare' già esprime il ritorno; 'indietro' ripete il concetto.",
+          "uso_comune": "Dobbiamo tornare indietro.",
+          "variante_corretta": "Dobbiamo tornare."
+        },
+        {
+          "pleonasmo": "avanzare in avanti",
+          "forma_corretta": "avanzare",
+          "spiegazione": "'Avanzare' significa già procedere in avanti.",
+          "uso_comune": "Le truppe avanzano in avanti.",
+          "variante_corretta": "Le truppe avanzano."
+        },
+        {
+          "pleonasmo": "andare via",
+          "forma_corretta": "andare / partire",
+          "spiegazione": "Nell'accezione di allontanarsi, 'via' è spesso ridondante.",
+          "uso_comune": "Se ne va via.",
+          "variante_corretta": "Se ne va.",
+          "nota": "In certi contesti 'via' aggiunge enfasi e può essere accettato."
+        },
+        {
+          "pleonasmo": "cacciar via",
+          "forma_corretta": "cacciare",
+          "spiegazione": "'Via' ripete il concetto di allontanamento già espresso da 'cacciare'.",
+          "uso_comune": "Lo ha cacciato via.",
+          "variante_corretta": "Lo ha cacciato."
+        },
+        {
+          "pleonasmo": "affondare giù",
+          "forma_corretta": "affondare",
+          "spiegazione": "'Affondare' implica già il movimento verso il basso.",
+          "uso_comune": "La nave affonda giù.",
+          "variante_corretta": "La nave affonda."
+        },
+        {
+          "pleonasmo": "precipitare giù",
+          "forma_corretta": "precipitare",
+          "spiegazione": "'Precipitare' già esprime una caduta verso il basso.",
+          "uso_comune": "È precipitato giù dal burrone.",
+          "variante_corretta": "È precipitato nel burrone."
+        },
+        {
+          "pleonasmo": "sollevarsi su",
+          "forma_corretta": "sollevarsi",
+          "spiegazione": "'Sollevarsi' implica già il movimento verso l'alto.",
+          "uso_comune": "Si solleva su dalla sedia.",
+          "variante_corretta": "Si solleva dalla sedia."
+        },
+        {
+          "pleonasmo": "abbassarsi giù",
+          "forma_corretta": "abbassarsi",
+          "spiegazione": "'Abbassarsi' già esprime un movimento verso il basso.",
+          "uso_comune": "Abbassati giù.",
+          "variante_corretta": "Abbassati."
+        },
+        {
+          "pleonasmo": "volare su in alto",
+          "forma_corretta": "volare in alto",
+          "spiegazione": "'Su' e 'in alto' si sovrappongono.",
+          "uso_comune": "L'aquila vola su in alto.",
+          "variante_corretta": "L'aquila vola in alto."
+        },
+        {
+          "pleonasmo": "rimbalzare su",
+          "forma_corretta": "rimbalzare",
+          "spiegazione": "'Rimbalzare' già implica un movimento verso l'alto.",
+          "uso_comune": "La palla rimbalza su.",
+          "variante_corretta": "La palla rimbalza."
+        },
+        {
+          "pleonasmo": "immergersi dentro",
+          "forma_corretta": "immergersi",
+          "spiegazione": "'Immergersi' implica già il movimento all'interno.",
+          "uso_comune": "Si è immerso dentro l'acqua.",
+          "variante_corretta": "Si è immerso nell'acqua."
+        },
+        {
+          "pleonasmo": "emergere fuori",
+          "forma_corretta": "emergere",
+          "spiegazione": "'Emergere' già esprime il venire fuori.",
+          "uso_comune": "È emerso fuori dall'acqua.",
+          "variante_corretta": "È emerso dall'acqua."
+        }
+      ]
+    },
+    "pronomi_pleonastici": {
+      "description": "Uso ridondante di pronomi personali o particelle pronominali che ripetono un'informazione già espressa.",
+      "examples": [
+        {
+          "pleonasmo": "a me mi piace",
+          "forma_corretta": "a me piace / mi piace",
+          "spiegazione": "'A me' e 'mi' esprimono entrambi il dativo della prima persona singolare.",
+          "uso_comune": "A me mi piace il gelato.",
+          "variante_corretta": "A me piace il gelato. / Mi piace il gelato.",
+          "nota": "Considerato il pleonasmo più diffuso dell'italiano parlato."
+        },
+        {
+          "pleonasmo": "a te ti sembra",
+          "forma_corretta": "a te sembra / ti sembra",
+          "spiegazione": "Doppio dativo della seconda persona singolare.",
+          "uso_comune": "A te ti sembra giusto?",
+          "variante_corretta": "Ti sembra giusto?"
+        },
+        {
+          "pleonasmo": "a lui gli piace",
+          "forma_corretta": "a lui piace / gli piace",
+          "spiegazione": "Doppio dativo della terza persona singolare.",
+          "uso_comune": "A lui gli piace molto.",
+          "variante_corretta": "Gli piace molto."
+        },
+        {
+          "pleonasmo": "a lei le sembra",
+          "forma_corretta": "a lei sembra / le sembra",
+          "spiegazione": "Doppio dativo della terza persona singolare femminile.",
+          "uso_comune": "A lei le sembra difficile.",
+          "variante_corretta": "Le sembra difficile."
+        },
+        {
+          "pleonasmo": "a noi ci piace",
+          "forma_corretta": "a noi piace / ci piace",
+          "spiegazione": "Doppio dativo della prima persona plurale.",
+          "uso_comune": "A noi ci piace il calcio.",
+          "variante_corretta": "Ci piace il calcio."
+        },
+        {
+          "pleonasmo": "a voi vi sembra",
+          "forma_corretta": "a voi sembra / vi sembra",
+          "spiegazione": "Doppio dativo della seconda persona plurale.",
+          "uso_comune": "A voi vi sembra normale?",
+          "variante_corretta": "Vi sembra normale?"
+        },
+        {
+          "pleonasmo": "a loro gli/piace",
+          "forma_corretta": "a loro piace / gli piace",
+          "spiegazione": "Doppio dativo della terza persona plurale.",
+          "uso_comune": "A loro gli piace molto.",
+          "variante_corretta": "A loro piace molto."
+        },
+        {
+          "pleonasmo": "io il mare lo vedo",
+          "forma_corretta": "vedo il mare",
+          "spiegazione": "Dislocazione a sinistra con ripresa pronominale ridondante.",
+          "uso_comune": "Io il mare lo amo.",
+          "variante_corretta": "Amo il mare.",
+          "nota": "Usato retoricamente per dare enfasi al complemento oggetto."
+        },
+        {
+          "pleonasmo": "di lui ne parlo",
+          "forma_corretta": "parlo di lui",
+          "spiegazione": "'Ne' riprende pleonasticamente 'di lui'.",
+          "uso_comune": "Di lui ne parlano tutti.",
+          "variante_corretta": "Parlano tutti di lui."
+        },
+        {
+          "pleonasmo": "non me ne importa nulla",
+          "forma_corretta": "non me ne importa / non mi importa nulla",
+          "spiegazione": "'Ne' e 'nulla' possono sovrapporsi concettualmente.",
+          "uso_comune": "Non me ne importa nulla.",
+          "variante_corretta": "Non me ne importa. / Non mi importa nulla."
+        },
+        {
+          "pleonasmo": "ci si vede",
+          "forma_corretta": "si vede",
+          "spiegazione": "In alcuni contesti 'ci' è ridondante con 'si'.",
+          "uso_comune": "Ci si vede domani!",
+          "variante_corretta": "Si vede domani! / Ci vediamo domani!",
+          "nota": "Forma molto comune nel parlato."
+        },
+        {
+          "pleonasmo": "gliene ho parlato di questa cosa",
+          "forma_corretta": "gliene ho parlato / gli ho parlato di questa cosa",
+          "spiegazione": "'Ne' e 'di questa cosa' ripetono lo stesso riferimento.",
+          "uso_comune": "Gliene ho parlato di questa cosa.",
+          "variante_corretta": "Gli ho parlato di questa cosa."
+        }
+      ]
+    },
+    "aggettivi_e_sostantivi_ridondanti": {
+      "description": "Combinazioni in cui l'aggettivo o il sostantivo aggiunto non aggiunge informazione nuova rispetto al nome che qualifica.",
+      "examples": [
+        {
+          "pleonasmo": "anziano vecchio",
+          "forma_corretta": "anziano / vecchio",
+          "spiegazione": "'Anziano' e 'vecchio' hanno lo stesso significato.",
+          "uso_comune": "Un uomo anziano e vecchio.",
+          "variante_corretta": "Un uomo anziano."
+        },
+        {
+          "pleonasmo": "vero fatto reale",
+          "forma_corretta": "fatto reale / fatto vero",
+          "spiegazione": "'Vero' e 'reale' significano la stessa cosa in questo contesto.",
+          "uso_comune": "È un vero fatto reale.",
+          "variante_corretta": "È un fatto reale."
+        },
+        {
+          "pleonasmo": "piccolo nano",
+          "forma_corretta": "nano / molto piccolo",
+          "spiegazione": "'Nano' implica già una piccola statura.",
+          "uso_comune": "Un piccolo nano.",
+          "variante_corretta": "Un nano."
+        },
+        {
+          "pleonasmo": "nuova innovazione",
+          "forma_corretta": "innovazione",
+          "spiegazione": "Innovazione implica gia un novita.",
+          "uso_comune": "Nuova innovazione",
+          "variante_corretta": "Innovazione."
+        },
+        {
+          "pleonasmo": "grande gigante",
+          "forma_corretta": "gigante",
+          "spiegazione": "'Gigante' implica già grandi dimensioni.",
+          "uso_comune": "Un grande gigante.",
+          "variante_corretta": "Un gigante."
+        },
+        {
+          "pleonasmo": "circolo rotondo",
+          "forma_corretta": "cerchio / circolo",
+          "spiegazione": "'Circolo' è già per definizione rotondo.",
+          "uso_comune": "Un circolo perfettamente rotondo.",
+          "variante_corretta": "Un cerchio perfetto."
+        },
+        {
+          "pleonasmo": "sfera rotonda",
+          "forma_corretta": "sfera",
+          "spiegazione": "Una sfera è per definizione rotonda.",
+          "uso_comune": "Una sfera rotonda.",
+          "variante_corretta": "Una sfera."
+        },
+        {
+          "pleonasmo": "monopolio esclusivo",
+          "forma_corretta": "monopolio",
+          "spiegazione": "Il monopolio è già per definizione esclusivo.",
+          "uso_comune": "Ha un monopolio esclusivo sul settore.",
+          "variante_corretta": "Ha un monopolio sul settore."
+        },
+        {
+          "pleonasmo": "alternativa diversa",
+          "forma_corretta": "alternativa",
+          "spiegazione": "Un'alternativa è già per definizione qualcosa di diverso.",
+          "uso_comune": "Dobbiamo trovare un'alternativa diversa.",
+          "variante_corretta": "Dobbiamo trovare un'alternativa."
+        },
+        {
+          "pleonasmo": "novità nuova",
+          "forma_corretta": "novità",
+          "spiegazione": "Una novità è per definizione nuova.",
+          "uso_comune": "È una novità nuova nel settore.",
+          "variante_corretta": "È una novità nel settore."
+        },
+        {
+          "pleonasmo": "cooperare insieme",
+          "forma_corretta": "cooperare",
+          "spiegazione": "'Cooperare' implica già un'azione condivisa.",
+          "uso_comune": "Dobbiamo cooperare insieme.",
+          "variante_corretta": "Dobbiamo cooperare."
+        },
+        {
+          "pleonasmo": "collaborare insieme",
+          "forma_corretta": "collaborare",
+          "spiegazione": "'Collaborare' già implica lavorare insieme.",
+          "uso_comune": "Lavoriamo collaborando insieme.",
+          "variante_corretta": "Lavoriamo collaborando."
+        },
+        {
+          "pleonasmo": "unanime consenso di tutti",
+          "forma_corretta": "unanime consenso / consenso di tutti",
+          "spiegazione": "'Unanime' già significa di tutti.",
+          "uso_comune": "Ha ottenuto l'unanime consenso di tutti.",
+          "variante_corretta": "Ha ottenuto l'unanime consenso."
+        },
+        {
+          "pleonasmo": "prova evidente",
+          "forma_corretta": "prova",
+          "spiegazione": "Una prova, per essere prova, deve essere già evidente.",
+          "uso_comune": "Questa è una prova evidente della sua colpa.",
+          "variante_corretta": "Questa è una prova della sua colpa.",
+          "nota": "Usato spesso per enfasi retorica."
+        },
+        {
+          "pleonasmo": "tragedia fatale",
+          "forma_corretta": "tragedia",
+          "spiegazione": "Una tragedia implica già esiti gravi o fatali.",
+          "uso_comune": "È stata una tragedia fatale.",
+          "variante_corretta": "È stata una tragedia."
+        },
+        {
+          "pleonasmo": "pericolo imminente",
+          "forma_corretta": "pericolo",
+          "spiegazione": "In molti contesti 'imminente' è ridondante se il pericolo è già presente.",
+          "uso_comune": "C'è un pericolo imminente.",
+          "variante_corretta": "C'è un pericolo.",
+          "nota": "'Imminente' può avere valore aggiuntivo in certi contesti (pericolo futuro vs presente)."
+        },
+        {
+          "pleonasmo": "regalo gratuito",
+          "forma_corretta": "regalo",
+          "spiegazione": "Un regalo è per definizione gratuito.",
+          "uso_comune": "Ti do un regalo gratuito.",
+          "variante_corretta": "Ti do un regalo."
+        },
+        {
+          "pleonasmo": "bonus aggiuntivo",
+          "forma_corretta": "bonus",
+          "spiegazione": "'Bonus' significa già qualcosa di extra/aggiuntivo.",
+          "uso_comune": "Riceverai un bonus aggiuntivo.",
+          "variante_corretta": "Riceverai un bonus."
+        },
+        {
+          "pleonasmo": "prima priorità",
+          "forma_corretta": "priorità",
+          "spiegazione": "Una priorità (dal latino prior) è già ciò che viene prima.",
+          "uso_comune": "Questa è la mia prima priorità.",
+          "variante_corretta": "Questa è la mia priorità."
+        },
+        {
+          "pleonasmo": "pianificazione preventiva",
+          "forma_corretta": "pianificazione",
+          "spiegazione": "Pianificare implica già fare qualcosa in anticipo.",
+          "uso_comune": "Serve una pianificazione preventiva.",
+          "variante_corretta": "Serve una pianificazione."
+        },
+        {
+          "pleonasmo": "risultato finale",
+          "forma_corretta": "risultato",
+          "spiegazione": "Un risultato è già l'esito finale di qualcosa.",
+          "uso_comune": "Qual è il risultato finale?",
+          "variante_corretta": "Qual è il risultato?",
+          "nota": "Può avere valore distintivo (es. risultato parziale vs finale)."
+        },
+        {
+          "pleonasmo": "conclusione finale",
+          "forma_corretta": "conclusione",
+          "spiegazione": "Una conclusione è già qualcosa di finale.",
+          "uso_comune": "La conclusione finale del romanzo è commovente.",
+          "variante_corretta": "La conclusione del romanzo è commovente."
+        },
+        {
+          "pleonasmo": "sinonimo equivalente",
+          "forma_corretta": "sinonimo",
+          "spiegazione": "I sinonimi sono per definizione equivalenti.",
+          "uso_comune": "Usa un sinonimo equivalente.",
+          "variante_corretta": "Usa un sinonimo."
+        },
+        {
+          "pleonasmo": "tautologia ripetitiva",
+          "forma_corretta": "tautologia",
+          "spiegazione": "La tautologia è già per definizione una ripetizione.",
+          "uso_comune": "È una tautologia ripetitiva.",
+          "variante_corretta": "È una tautologia."
+        },
+        {
+          "pleonasmo": "fatto accaduto",
+          "forma_corretta": "fatto / evento",
+          "spiegazione": "Un fatto è già qualcosa che è accaduto.",
+          "uso_comune": "Il fatto accaduto ieri è grave.",
+          "variante_corretta": "Il fatto di ieri è grave."
+        },
+        {
+          "pleonasmo": "promessa solenne",
+          "forma_corretta": "promessa / giuramento",
+          "spiegazione": "Una promessa seria è già solenne per definizione.",
+          "uso_comune": "Ti faccio una promessa solenne.",
+          "variante_corretta": "Ti giuro.",
+          "nota": "Usato spesso per enfasi retorica."
+        }
+      ]
+    },
+    "avverbi_e_locuzioni_ridondanti": {
+      "description": "Avverbi o locuzioni avverbiali che ripetono un'informazione già contenuta nel verbo o nell'aggettivo che accompagnano.",
+      "examples": [
+        {
+          "pleonasmo": "vedere con i propri occhi",
+          "forma_corretta": "vedere",
+          "spiegazione": "Vedere implica già l'uso degli occhi.",
+          "uso_comune": "L'ho visto con i miei occhi.",
+          "variante_corretta": "L'ho visto.",
+          "nota": "Usato comunemente per enfatizzare la testimonianza diretta."
+        },
+        {
+          "pleonasmo": "sentire con le proprie orecchie",
+          "forma_corretta": "sentire",
+          "spiegazione": "Sentire implica già l'uso delle orecchie.",
+          "uso_comune": "L'ho sentito con le mie orecchie.",
+          "variante_corretta": "L'ho sentito."
+        },
+        {
+          "pleonasmo": "pensare nella propria testa",
+          "forma_corretta": "pensare",
+          "spiegazione": "Il pensiero avviene già nella testa.",
+          "uso_comune": "Ci penso nella mia testa.",
+          "variante_corretta": "Ci penso."
+        },
+        {
+          "pleonasmo": "andare avanti",
+          "forma_corretta": "andare / procedere",
+          "spiegazione": "'Andare' già implica un movimento progressivo; 'avanti' può essere ridondante.",
+          "uso_comune": "Dobbiamo andare avanti.",
+          "variante_corretta": "Dobbiamo procedere.",
+          "nota": "In senso figurato 'andare avanti' è accettato e comune."
+        },
+        {
+          "pleonasmo": "ripetere di nuovo",
+          "forma_corretta": "ripetere",
+          "spiegazione": "'Ripetere' già implica farlo di nuovo.",
+          "uso_comune": "Te lo ripeto di nuovo.",
+          "variante_corretta": "Te lo ripeto."
+        },
+        {
+          "pleonasmo": "ricominciare da capo",
+          "forma_corretta": "ricominciare",
+          "spiegazione": "'Ricominciare' implica già ripartire dall'inizio.",
+          "uso_comune": "Dobbiamo ricominciare da capo.",
+          "variante_corretta": "Dobbiamo ricominciare.",
+          "nota": "In certi contesti 'da capo' aggiunge enfasi accettata."
+        },
+        {
+          "pleonasmo": "aggiungere in più",
+          "forma_corretta": "aggiungere",
+          "spiegazione": "'Aggiungere' implica già mettere qualcosa in più.",
+          "uso_comune": "Posso aggiungere in più qualche dettaglio.",
+          "variante_corretta": "Posso aggiungere qualche dettaglio."
+        },
+        {
+          "pleonasmo": "unire insieme",
+          "forma_corretta": "unire",
+          "spiegazione": "'Unire' già implica mettere insieme.",
+          "uso_comune": "Dobbiamo unire insieme le due parti.",
+          "variante_corretta": "Dobbiamo unire le due parti."
+        },
+        {
+          "pleonasmo": "dividere in parti separate",
+          "forma_corretta": "dividere",
+          "spiegazione": "Dividere produce già parti separate.",
+          "uso_comune": "Dividiamo in parti separate.",
+          "variante_corretta": "Dividiamo."
+        },
+        {
+          "pleonasmo": "tornare di nuovo",
+          "forma_corretta": "tornare",
+          "spiegazione": "'Tornare' implica già farlo di nuovo.",
+          "uso_comune": "È tornato di nuovo.",
+          "variante_corretta": "È tornato."
+        },
+        {
+          "pleonasmo": "riunire di nuovo insieme",
+          "forma_corretta": "riunire",
+          "spiegazione": "'Riunire' implica già riunirsi insieme; 'di nuovo' e 'insieme' sono ridondanti.",
+          "uso_comune": "Li ha riuniti di nuovo insieme.",
+          "variante_corretta": "Li ha riuniti."
+        },
+        {
+          "pleonasmo": "protestare contro",
+          "forma_corretta": "protestare",
+          "spiegazione": "Protestare è già di per sé un'azione contraria.",
+          "uso_comune": "Protestavano contro il governo.",
+          "variante_corretta": "Protestavano.",
+          "nota": "La preposizione 'contro' non è sempre ridondante se si specifica l'oggetto."
+        },
+        {
+          "pleonasmo": "cercare di trovare",
+          "forma_corretta": "cercare / trovare",
+          "spiegazione": "Cercare implica già l'intenzione di trovare.",
+          "uso_comune": "Cerca di trovare una soluzione.",
+          "variante_corretta": "Trova una soluzione.",
+          "nota": "In certi usi retorici questa forma è accettata."
+        },
+        {
+          "pleonasmo": "prepararsi in anticipo",
+          "forma_corretta": "prepararsi",
+          "spiegazione": "Prepararsi implica già farlo prima di qualcosa.",
+          "uso_comune": "Preparati in anticipo.",
+          "variante_corretta": "Preparati."
+        },
+        {
+          "pleonasmo": "prevedere prima",
+          "forma_corretta": "prevedere",
+          "spiegazione": "'Pre-vedere' già contiene l'idea del 'prima'.",
+          "uso_comune": "Avrebbero dovuto prevedere prima.",
+          "variante_corretta": "Avrebbero dovuto prevedere."
+        },
+        {
+          "pleonasmo": "precedere prima",
+          "forma_corretta": "precedere",
+          "spiegazione": "'Precedere' significa già andare prima.",
+          "uso_comune": "Questo è preceduto prima dall'altro.",
+          "variante_corretta": "Questo precede l'altro."
+        }
+      ]
+    },
+    "acronimi_ridondanti": {
+      "description": "Espressioni in cui si aggiunge al fianco di un acronimo una parola già contenuta nell'acronimo stesso (RAS syndrome in inglese: Redundant Acronym Syndrome).",
+      "examples": [
+        {
+          "pleonasmo": "virus HIV",
+          "forma_corretta": "HIV",
+          "spiegazione": "HIV = Human Immunodeficiency Virus; 'virus' è già nell'acronimo.",
+          "uso_comune": "Il virus HIV è molto pericoloso.",
+          "variante_corretta": "L'HIV è molto pericoloso."
+        },
+        {
+          "pleonasmo": "numero PIN",
+          "forma_corretta": "PIN / codice PIN",
+          "spiegazione": "PIN = Personal Identification Number; 'numero' è già nell'acronimo.",
+          "uso_comune": "Inserisci il numero PIN.",
+          "variante_corretta": "Inserisci il PIN."
+        },
+        {
+          "pleonasmo": "macchina ATM",
+          "forma_corretta": "ATM / bancomat",
+          "spiegazione": "ATM = Automated Teller Machine; 'macchina' è già nell'acronimo.",
+          "uso_comune": "Prelevo alla macchina ATM.",
+          "variante_corretta": "Prelevo all'ATM."
+        },
+        {
+          "pleonasmo": "codice ISBN",
+          "forma_corretta": "ISBN",
+          "spiegazione": "ISBN = International Standard Book Number; il termine 'codice' o 'numero' è già implicito.",
+          "uso_comune": "Il codice ISBN del libro.",
+          "variante_corretta": "L'ISBN del libro."
+        },
+        {
+          "pleonasmo": "rete LAN",
+          "forma_corretta": "LAN",
+          "spiegazione": "LAN = Local Area Network; 'rete' è già nell'acronimo.",
+          "uso_comune": "Collegati alla rete LAN.",
+          "variante_corretta": "Collegati alla LAN."
+        },
+        {
+          "pleonasmo": "file PDF",
+          "forma_corretta": "PDF / documento PDF",
+          "spiegazione": "PDF = Portable Document Format; 'file' o 'documento' è già implicito.",
+          "uso_comune": "Inviami il file PDF.",
+          "variante_corretta": "Inviami il PDF.",
+          "nota": "Molto diffuso nell'uso quotidiano e generalmente accettato."
+        },
+        {
+          "pleonasmo": "pannello LCD",
+          "forma_corretta": "LCD / schermo LCD",
+          "spiegazione": "LCD = Liquid Crystal Display; 'pannello' o 'display' è già nell'acronimo.",
+          "uso_comune": "Schermo con pannello LCD.",
+          "variante_corretta": "Schermo LCD."
+        },
+        {
+          "pleonasmo": "sistema GPS",
+          "forma_corretta": "GPS",
+          "spiegazione": "GPS = Global Positioning System; 'sistema' è già nell'acronimo.",
+          "uso_comune": "Usa il sistema GPS.",
+          "variante_corretta": "Usa il GPS."
+        },
+        {
+          "pleonasmo": "testamento olografo scritto di proprio pugno",
+          "forma_corretta": "testamento olografo",
+          "spiegazione": "'Olografo' significa già scritto di proprio pugno.",
+          "uso_comune": "Ha lasciato un testamento olografo scritto di proprio pugno.",
+          "variante_corretta": "Ha lasciato un testamento olografo."
+        }
+      ]
+    },
+    "pleonasmi_retorici_e_letterari": {
+      "description": "Pleonasmi usati consapevolmente per scopi stilistici, enfatici o letterari. In questi contesti il pleonasmo non è un errore ma una figura retorica.",
+      "examples": [
+        {
+          "pleonasmo": "a me mi piace",
+          "autore": "Alessandro Manzoni, Cesare Pavese",
+          "uso_letterario": "Usato per mimesi del parlato e per dare rilevanza al soggetto.",
+          "esempio": "A me mi par di sì (Manzoni, I Promessi Sposi)"
+        },
+        {
+          "pleonasmo": "Io il cielo di Londra l'ho sempre visto nuvoloso",
+          "spiegazione": "Dislocazione a sinistra con ripresa pronominale: dà enfasi al tema.",
+          "uso_letterario": "Comune nella prosa moderna per vivacità narrativa.",
+          "variante_corretta": "Ho sempre visto il cielo di Londra nuvoloso."
+        },
+        {
+          "pleonasmo": "salir su, scender giù, cacciar via",
+          "spiegazione": "Locuzioni verbali con particella avverbiale pleonastica: fortemente polisemiche ed espressive.",
+          "fonte": "Giovanni Nencioni, Crusca per Voi n. 8",
+          "uso_letterario": "Frequenti nei dialetti e nella lingua popolare; producono espressività."
+        },
+        {
+          "pleonasmo": "pace perpetua",
+          "spiegazione": "La 'pace' implica già la fine definitiva delle ostilità; 'perpetua' sarebbe ridondante.",
+          "fonte": "citato in Kant e successori",
+          "uso_letterario": "Usato per rafforzare il concetto e dargli portata ideale.",
+          "nota": "Kant stesso notò che 'pace perpetua' è quasi un pleonasmo."
+        },
+        {
+          "pleonasmo": "casa è casa",
+          "spiegazione": "Tautologia usata come pleonasmo enfatico per esprimere il valore unico della casa.",
+          "uso_letterario": "Espressione idiomatica molto comune nel parlato quotidiano.",
+          "uso_comune": "Com'è andata in viaggio? Bene, ma sai com'è… casa è casa!"
+        },
+        {
+          "pleonasmo": "solo ed unico",
+          "spiegazione": "'Solo' e 'unico' sono quasi sinonimi in certi contesti.",
+          "uso_comune": "È il solo ed unico responsabile.",
+          "variante_corretta": "È il solo responsabile. / È l'unico responsabile.",
+          "uso_letterario": "Usato per enfasi assoluta."
+        },
+        {
+          "pleonasmo": "vero e proprio",
+          "spiegazione": "'Vero' e 'proprio' hanno significati molto simili qui.",
+          "uso_comune": "È un vero e proprio disastro.",
+          "variante_corretta": "È un disastro.",
+          "nota": "Espressione idiomatica ormai stabilizzata nell'italiano corrente."
+        }
+      ]
+    },
+    "espressioni_comuni_pleonastiche": {
+      "description": "Frasi ed espressioni pleonastiche entrate nell'uso quotidiano italiano, spesso accettate anche in contesti formali.",
+      "examples": [
+        {
+          "pleonasmo": "di che cosa si tratta?",
+          "forma_corretta": "di che si tratta? / di cosa si tratta?",
+          "spiegazione": "'Che cosa' è già un'unica espressione interrogativa; 'di' può creare ridondanza.",
+          "uso_comune": "Di che cosa si tratta?",
+          "nota": "Ampiamente accettato."
+        },
+        {
+          "pleonasmo": "è ovvio che sì",
+          "forma_corretta": "ovviamente sì / è ovvio",
+          "spiegazione": "'Ovvio' e 'che sì' si sovrappongono.",
+          "uso_comune": "È ovvio che sì!",
+          "variante_corretta": "Ovviamente!"
+        },
+        {
+          "pleonasmo": "l'uno e l'altro entrambi",
+          "forma_corretta": "entrambi / l'uno e l'altro",
+          "spiegazione": "'Entrambi' significa già l'uno e l'altro.",
+          "uso_comune": "L'uno e l'altro sono entrambi bravi.",
+          "variante_corretta": "Sono entrambi bravi."
+        },
+        {
+          "pleonasmo": "nell'anno 2024",
+          "forma_corretta": "nel 2024",
+          "spiegazione": "'Anno' è implicito nel numero dell'anno.",
+          "uso_comune": "È successo nell'anno 2024.",
+          "variante_corretta": "È successo nel 2024.",
+          "nota": "Comune ma tecnicamente ridondante."
+        },
+        {
+          "pleonasmo": "rimango ancora",
+          "forma_corretta": "rimango",
+          "spiegazione": "'Rimanere' già implica una continuazione; 'ancora' è spesso ridondante.",
+          "uso_comune": "Rimango ancora qui.",
+          "variante_corretta": "Rimango qui.",
+          "nota": "'Ancora' può aggiungere valore enfatico."
+        },
+        {
+          "pleonasmo": "mi ricordo a memoria",
+          "forma_corretta": "ricordo",
+          "spiegazione": "Ricordare avviene già attraverso la memoria.",
+          "uso_comune": "Me lo ricordo a memoria.",
+          "variante_corretta": "Lo ricordo."
+        },
+        {
+          "pleonasmo": "attualmente al momento",
+          "forma_corretta": "attualmente / al momento",
+          "spiegazione": "Le due espressioni hanno lo stesso significato temporale.",
+          "uso_comune": "Attualmente, al momento non è disponibile.",
+          "variante_corretta": "Al momento non è disponibile."
+        },
+        {
+          "pleonasmo": "vicino di casa adiacente",
+          "forma_corretta": "vicino di casa",
+          "spiegazione": "Il vicino di casa è già per definizione adiacente.",
+          "uso_comune": "Il mio vicino di casa adiacente.",
+          "variante_corretta": "Il mio vicino di casa."
+        },
+        {
+          "pleonasmo": "completamente esaurito del tutto",
+          "forma_corretta": "esaurito / completamente esaurito",
+          "spiegazione": "'Completamente' e 'del tutto' si duplicano.",
+          "uso_comune": "Il prodotto è completamente esaurito del tutto.",
+          "variante_corretta": "Il prodotto è esaurito."
+        },
+        {
+          "pleonasmo": "cadere a terra",
+          "forma_corretta": "cadere",
+          "spiegazione": "Cadere implica già andare verso il basso, verso terra.",
+          "uso_comune": "È caduto a terra.",
+          "variante_corretta": "È caduto.",
+          "nota": "'A terra' può precisare il luogo della caduta se non ovvio."
+        },
+        {
+          "pleonasmo": "dormire nel sonno",
+          "forma_corretta": "dormire",
+          "spiegazione": "Il sonno è lo stato del dormire.",
+          "uso_comune": "È morto dormendo nel sonno.",
+          "variante_corretta": "È morto nel sonno."
+        },
+        {
+          "pleonasmo": "ridere di gusto",
+          "forma_corretta": "ridere",
+          "spiegazione": "Ridere implica già un certo gusto; la locuzione è però accettata per enfasi.",
+          "uso_comune": "Rideva di gusto.",
+          "nota": "Accettato come espressione idiomatica."
+        },
+        {
+          "pleonasmo": "naufragare in acqua",
+          "forma_corretta": "naufragare",
+          "spiegazione": "Si naufraga già per definizione in acqua.",
+          "uso_comune": "La nave è naufragata in acqua.",
+          "variante_corretta": "La nave è naufragata."
+        },
+        {
+          "pleonasmo": "annegare sott'acqua",
+          "forma_corretta": "annegare",
+          "spiegazione": "Annegare implica già il soffocamento in acqua.",
+          "uso_comune": "Rischiava di annegare sott'acqua.",
+          "variante_corretta": "Rischiava di annegare."
+        },
+        {
+          "pleonasmo": "bruciare nel fuoco",
+          "forma_corretta": "bruciare",
+          "spiegazione": "Bruciare implica già il fuoco.",
+          "uso_comune": "È bruciato nel fuoco.",
+          "variante_corretta": "È bruciato."
+        },
+        {
+          "pleonasmo": "gridare ad alta voce",
+          "forma_corretta": "gridare",
+          "spiegazione": "Gridare implica già una voce alta.",
+          "uso_comune": "Ha gridato ad alta voce.",
+          "variante_corretta": "Ha gridato."
+        },
+        {
+          "pleonasmo": "sussurrare sottovoce",
+          "forma_corretta": "sussurrare",
+          "spiegazione": "Sussurrare già implica parlare sottovoce.",
+          "uso_comune": "Ha sussurrato sottovoce.",
+          "variante_corretta": "Ha sussurrato."
+        },
+        {
+          "pleonasmo": "piangere in lacrime",
+          "forma_corretta": "piangere",
+          "spiegazione": "Piangere già produce lacrime.",
+          "uso_comune": "Piangeva in lacrime.",
+          "variante_corretta": "Piangeva."
+        },
+        {
+          "pleonasmo": "ridere con un sorriso",
+          "forma_corretta": "ridere / sorridere",
+          "spiegazione": "Il riso include già il sorriso.",
+          "uso_comune": "Rideva con un sorriso.",
+          "variante_corretta": "Sorrideva."
+        },
+        {
+          "pleonasmo": "camminare a piedi",
+          "forma_corretta": "camminare / andare a piedi",
+          "spiegazione": "Camminare implica già l'uso dei piedi.",
+          "uso_comune": "È andato camminando a piedi.",
+          "variante_corretta": "È andato a piedi."
+        },
+        {
+          "pleonasmo": "nuotare nell'acqua",
+          "forma_corretta": "nuotare",
+          "spiegazione": "Si nuota già per definizione in acqua.",
+          "uso_comune": "Stava nuotando nell'acqua.",
+          "variante_corretta": "Stava nuotando."
+        },
+        {
+          "pleonasmo": "galoppare a cavallo",
+          "forma_corretta": "galoppare",
+          "spiegazione": "Galoppare è già un'azione del cavallo.",
+          "uso_comune": "Stava galoppando a cavallo.",
+          "variante_corretta": "Stava galoppando."
+        },
+        {
+          "pleonasmo": "arrossire di rosso",
+          "forma_corretta": "arrossire",
+          "spiegazione": "'Arrossire' già significa diventare rosso.",
+          "uso_comune": "Arrossì di rosso per l'imbarazzo.",
+          "variante_corretta": "Arrossì per l'imbarazzo."
+        },
+        {
+          "pleonasmo": "impallidire di bianco",
+          "forma_corretta": "impallidire",
+          "spiegazione": "'Impallidire' significa già diventare pallido/bianco.",
+          "uso_comune": "Impallidì di bianco dalla paura.",
+          "variante_corretta": "Impallidì dalla paura."
+        },
+        {
+          "pleonasmo": "recarsi in loco sul posto",
+          "forma_corretta": "recarsi sul posto / recarsi in loco",
+          "spiegazione": "'In loco' e 'sul posto' hanno lo stesso significato.",
+          "uso_comune": "I carabinieri si sono recati in loco sul posto.",
+          "variante_corretta": "I carabinieri si sono recati sul posto."
+        },
+        {
+          "pleonasmo": "mani appoggiate sulle mani",
+          "forma_corretta": "mani appoggiate",
+          "spiegazione": "Ridondanza concettuale.",
+          "uso_comune": "Aveva le mani appoggiate sulle proprie mani.",
+          "variante_corretta": "Aveva le mani appoggiate."
+        },
+        {
+          "pleonasmo": "alle ore 12 di mezzogiorno",
+          "forma_corretta": "alle 12 / a mezzogiorno",
+          "spiegazione": "'Le 12' e 'mezzogiorno' indicano la stessa ora.",
+          "uso_comune": "Ci vediamo alle ore 12 di mezzogiorno.",
+          "variante_corretta": "Ci vediamo a mezzogiorno."
+        },
+        {
+          "pleonasmo": "alla mezzanotte delle 24",
+          "forma_corretta": "a mezzanotte",
+          "spiegazione": "'Le 24' e 'mezzanotte' coincidono.",
+          "uso_comune": "Il treno parte alla mezzanotte delle 24.",
+          "variante_corretta": "Il treno parte a mezzanotte."
+        },
+        {
+          "pleonasmo": "a piedi camminando",
+          "forma_corretta": "a piedi",
+          "spiegazione": "Andare a piedi implica già camminare.",
+          "uso_comune": "Ci siamo andati a piedi camminando.",
+          "variante_corretta": "Ci siamo andati a piedi."
+        }
+      ]
+    },
+    "pleonasmi_dialettali_e_regionali": {
+      "description": "Pleonasmi caratteristici di varietà regionali o dialettali dell'italiano.",
+      "examples": [
+        {
+          "pleonasmo": "a me mi piace (variante dialettale)",
+          "regione": "diffuso in tutta Italia, più comune al Centro-Sud",
+          "spiegazione": "Doppio dativo molto radicato nel parlato informale.",
+          "variante_corretta": "mi piace"
+        },
+        {
+          "pleonasmo": "scendo giù",
+          "regione": "Italia settentrionale (influenza dei dialetti locali)",
+          "spiegazione": "Fortemente radicato nei dialetti padani.",
+          "fonte": "Accademia della Crusca",
+          "variante_corretta": "scendo"
+        },
+        {
+          "pleonasmo": "salgo su",
+          "regione": "Italia settentrionale",
+          "spiegazione": "Locuzione verbale con particella avverbiale pleonastica tipica dei dialetti settentrionali.",
+          "variante_corretta": "salgo"
+        },
+        {
+          "pleonasmo": "metti dentro",
+          "regione": "varie regioni",
+          "spiegazione": "'Dentro' ribadisce il movimento verso l'interno già espresso da 'mettere' nel contesto.",
+          "uso_comune": "Bene, metti dentro la lettera.",
+          "variante_corretta": "Inserisci la lettera."
+        },
+        {
+          "pleonasmo": "butta giù",
+          "regione": "varie regioni",
+          "spiegazione": "Locuzione verbale con 'giù' pleonastico (nel significato di inghiottire o demolire).",
+          "uso_comune": "Butta giù l'aspirina.",
+          "variante_corretta": "Inghiotti l'aspirina.",
+          "nota": "'Buttare giù' ha spesso significati idiomatici precisi: demolire, inghiottire, trascrivere."
+        },
+        {
+          "pleonasmo": "buttare giù il palazzo",
+          "regione": "varie regioni",
+          "spiegazione": "'Buttare giù' = demolire; 'giù' rafforza il concetto di abbattimento.",
+          "uso_comune": "Stanno per buttare giù il palazzo.",
+          "variante_corretta": "Stanno per demolire il palazzo.",
+          "nota": "L'espressione idiomatica è ormai stabilizzata."
+        }
+      ]
+    },
+    "negazioni_ridondanti": {
+      "description": "Strutture con doppia negazione o negazione ridondante, talvolta accettate per enfasi.",
+      "examples": [
+        {
+          "pleonasmo": "non... mica",
+          "spiegazione": "'Mica' è già di per sé una negazione (dal latino 'mica' = per niente); con 'non' crea una doppia negazione enfatica.",
+          "uso_comune": "Non lo sapevo mica.",
+          "variante_corretta": "Non lo sapevo.",
+          "nota": "Forma molto comune nel parlato; accettata informalmente."
+        },
+        {
+          "pleonasmo": "non... per niente",
+          "spiegazione": "Doppia negazione rafforzativa.",
+          "uso_comune": "Non mi piace per niente.",
+          "variante_corretta": "Non mi piace.",
+          "nota": "Usato per enfasi; accettato nel parlato."
+        },
+        {
+          "pleonasmo": "non... neanche",
+          "spiegazione": "In certi costrutti 'neanche' è ridondante con la negazione.",
+          "uso_comune": "Non l'ha neanche guardato.",
+          "variante_corretta": "Non l'ha guardato.",
+          "nota": "Spesso 'neanche' aggiunge sfumatura di significato."
+        },
+        {
+          "pleonasmo": "senza che... non",
+          "spiegazione": "In certi costrutti la negazione implicita in 'senza' viene ribadita con 'non'.",
+          "uso_comune": "Senza che nessuno non dica niente.",
+          "variante_corretta": "Senza che nessuno dica niente.",
+          "nota": "Errore comune nel parlato spontaneo."
+        }
+      ]
+    }
+  }
+}

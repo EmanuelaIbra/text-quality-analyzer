@@ -1,0 +1,36 @@
+# Core NLP
+
+spacy>=3.8.0
+nltk>=3.9
+scikit-learn>=1.5.0
+numpy>=1.26.0
+
+# Italian language models
+
+# Install separately:
+
+# python -m spacy download it_core_news_sm
+
+# python -m spacy download it_core_news_lg
+
+# Grammar checking
+
+language-tool-python>=2.9.0
+
+# Local LLM rewriting
+
+ollama>=0.6.0
+
+# API
+
+fastapi>=0.115.0
+uvicorn[standard]>=0.34.0
+pydantic>=2.11.0
+
+# Utilities
+
+tqdm>=4.67.0
+
+# Optional
+
+huggingface-hub>=0.33.0
