@@ -5,9 +5,9 @@ from collections import Counter, defaultdict
 
 
 class RepetitionAnalyzer:
-    def __init__(self):
+    def __init__(self, nlp=None):
         # Load the large pretrained spaCy model for Italian language processing
-        self.nlp = spacy.load("it_core_news_lg")
+        self.nlp = nlp or spacy.load("it_core_news_lg")
         # Extract the default set of Italian stop words (e.g., "il", "di", "su")
         self.stop_words = self.nlp.Defaults.stop_words
 

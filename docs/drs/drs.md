@@ -8,7 +8,7 @@ Softwere Engineering
 <div align='right'>
 <b>Authors</b><br>
 Emanuela Ibra<br>
-[Colleague Name]
+Yakup Gürer
 </div>
 
 ---

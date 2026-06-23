@@ -10,7 +10,7 @@ class GrammarCorrector:
     def get_match_value(self, match, *names, default=None):
         """
         Helper method to safely extract attributes from a match object.
-        It loops through a list of potential attribute names (to handle API version differences)
+        It loops through a list of potential attribute names 
         and returns the first one that exists. If none match, it returns the default value.
         """
         for name in names:
@@ -32,49 +32,51 @@ class GrammarCorrector:
         # Return a structured dictionary containing the original text, the corrections,
         # and a detailed breakdown of each found error
 
+        parsed_matches = []
+
+        for match in matches:
+            offset = self.get_match_value(match, "offset", default=0)
+            length = self.get_match_value(
+                match,
+                "errorLength",
+                "error_length",
+                default=0
+            )
+
+            wrong_text = text[offset: offset + length]
+
+            context = self.get_match_value(
+                match,
+                "context",
+                default=""
+            )
+
+            parsed_matches.append({
+                "message": self.get_match_value(
+                    match,
+                    "message",
+                    default=""
+                ),
+                "rule": self.get_match_value(
+                    match,
+                    "ruleId",
+                    "rule_id",
+                    default=""
+                ),
+                "offset": offset,
+                "length": length,
+                "wrong_text": wrong_text,
+                "context": context,
+                "suggestions": self.get_match_value(
+                    match,
+                    "replacements",
+                    default=[]
+                )[:5],
+            })
+
         return {
-            "original": text,
-            "corrected": corrected_text,
-            "polished": corrected_text,
-            "matches": [
-                {   
-                    # Safely retrieve the explanation message for the error
-                    "message": self.get_match_value(
-                        match,
-                        "message",
-                        default=""
-                    ),
-                    # Safely retrieve the rule identifier (checks for 'ruleId' or 'rule_id')
-                    "rule": self.get_match_value(
-                        match,
-                        "ruleId",
-                        "rule_id",
-                        default=""
-                    ),
-
-                    # Safely retrieve the starting character position of the error
-                    "offset": self.get_match_value(
-                        match,
-                        "offset",
-                        default=0
-                    ),
-
-                    # Safely retrieve the length of the error (checks for 'errorLength' or 'error_length')
-                    "length": self.get_match_value(
-                        match,
-                        "errorLength",
-                        "error_length",
-                        default=0
-                    ),
-
-                    # Safely retrieve the replacement suggestions, slicing to limit the output to the top 5
-                    "suggestions": self.get_match_value(
-                        match,
-                        "replacements",
-                        default=[]
-                    )[:5],
-                }
-                # List comprehension to iterate through and parse every match found by LanguageTool
-                for match in matches
-            ],
-        }
+        "original": text,
+        "corrected": corrected_text,
+        "polished": corrected_text,
+        "matches": parsed_matches,
+    }

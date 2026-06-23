@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+from typing import Dict, Optional
 
 from writing_service import WritingService
 
@@ -8,9 +9,14 @@ app = FastAPI()
 service = WritingService()
 
 
-class TextRequest(BaseModel):
+class AnalyzeRequest(BaseModel):
+    text: str
+
+
+class RewriteRequest(BaseModel):
     text: str
     mode: str = "concise"
+    decisions: Optional[Dict[str, str]] = None
 
 
 @app.get("/")
@@ -20,35 +26,44 @@ def home():
     }
 
 
-@app.post("/rewrite")
-def rewrite_text(request: TextRequest):
-    result = service.process(
+@app.post("/analyze")
+def analyze_text_endpoint(request: AnalyzeRequest):
+    result = service.analyze_only(
         request.text,
-        mode=request.mode,
-        final_check=False,
         fast=True,
-        include_full_analysis=False,
     )
 
-    redundancy_report = result.get("redundancy_report", {})
+    return {
+        "success": True,
+        "original": result["original"],
+        "grammar_corrected": result["grammar_corrected"],
+        "polished": result["polished"],
+        "pleonasm_cleaned": result["pleonasm_cleaned"],
+
+        "grammar_matches": result["grammar_matches"],
+        "grammar_metrics": result["grammar_metrics_before_rewrite"],
+
+        "repetition_analysis": result["repetition_analysis"],
+        "redundancy_report": result["redundancy_report"],
+
+        "user_choice_candidates": result["user_choice_candidates"],
+        "merge_candidates": result["merge_candidates"],
+    }
+
+
+@app.post("/rewrite")
+def rewrite_text_endpoint(request: RewriteRequest):
+    result = service.rewrite_after_analysis(
+        text=request.text,
+        mode=request.mode,
+        decisions=request.decisions or {},
+        final_check=False,
+    )
 
     return {
-        "original": result.get("original", request.text),
-        "grammar_corrected": result.get("grammar_corrected", ""),
-        "polished": result.get("polished", ""),
-        "rewritten": result.get("rewritten", ""),
-        "final": result.get("final", ""),
-        "grammar_matches": result.get("grammar_matches", []),
-        "final_grammar_matches": result.get("final_grammar_matches", []),
-        "metrics": result.get("final_metrics", {}),
-        "repetition_analysis": result.get(
-            "repetition_corrected",
-            result.get("repetition_analysis", "")
-        ),
-        "redundancy_report": {
-            "pleonasms": redundancy_report.get("pleonasms", []),
-            "repeated_words": redundancy_report.get("repeated_words", []),
-            "similar_words": redundancy_report.get("similar_words", []),
-            "redundant_sentences": redundancy_report.get("redundant_sentences", []),
-        },
+        "success": True,
+        "rewritten": result["rewritten"],
+        "final": result["final"],
+        "final_grammar_matches": result["final_grammar_matches"],
+        "metrics": result["final_metrics"],
     }
