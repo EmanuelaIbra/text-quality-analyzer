@@ -1,8 +1,8 @@
-const API_URL = " ";
+const BASE_API_URL = "https://negotiate-resident-swept.ngrok-free.dev";
 
 function onOpen() {
   DocumentApp.getUi()
-    .createMenu("AI Writing Assistant")
+    .createMenu("Writing Assistant")
     .addItem("Open Assistant", "showSidebar")
     .addToUi();
 }
@@ -10,7 +10,7 @@ function onOpen() {
 function showSidebar() {
   const html = HtmlService
     .createHtmlOutputFromFile("Sidebar")
-    .setTitle("AI Writing Assistant");
+    .setTitle("Writing Assistant");
 
   DocumentApp.getUi().showSidebar(html);
 }
@@ -37,7 +37,10 @@ function getSelectedText() {
       if (rangeElement.isPartial()) {
         const start = rangeElement.getStartOffset();
         const end = rangeElement.getEndOffsetInclusive();
-        selectedText += textElement.getText().substring(start, end + 1);
+
+        selectedText += textElement
+          .getText()
+          .substring(start, end + 1);
       } else {
         selectedText += textElement.getText();
       }
@@ -52,19 +55,67 @@ function getSelectedText() {
   };
 }
 
-function analyzeAndRewriteSelectedText(mode) {
+function analyzeSelectedText() {
   const selected = getSelectedText();
 
   if (!selected.success) {
     return selected;
   }
 
-  const response = UrlFetchApp.fetch(API_URL, {
+  const response = UrlFetchApp.fetch(BASE_API_URL + "/analyze", {
     method: "post",
     contentType: "application/json",
     payload: JSON.stringify({
-      text: selected.text,
-      mode: mode || "concise"
+      text: selected.text
+    }),
+    muteHttpExceptions: true
+  });
+
+  const status = response.getResponseCode();
+  const body = response.getContentText();
+
+  if (status !== 200) {
+    return {
+      success: false,
+      message: body
+    };
+  }
+
+  const result = JSON.parse(body);
+
+  PropertiesService.getDocumentProperties().setProperty(
+    "latestOriginalText",
+    selected.text
+  );
+
+  PropertiesService.getDocumentProperties().setProperty(
+    "latestAnalysisResult",
+    JSON.stringify(result)
+  );
+
+  return result;
+}
+
+function rewriteAfterReview(mode, decisions) {
+  const originalText =
+    PropertiesService.getDocumentProperties().getProperty(
+      "latestOriginalText"
+    );
+
+  if (!originalText) {
+    return {
+      success: false,
+      message: "No analyzed text found. Please run analysis first."
+    };
+  }
+
+  const response = UrlFetchApp.fetch(BASE_API_URL + "/rewrite", {
+    method: "post",
+    contentType: "application/json",
+    payload: JSON.stringify({
+      text: originalText,
+      mode: mode || "concise",
+      decisions: decisions || {}
     }),
     muteHttpExceptions: true
   });
@@ -83,18 +134,21 @@ function analyzeAndRewriteSelectedText(mode) {
 
   PropertiesService.getDocumentProperties().setProperty(
     "latestOptimizedText",
-    result.final
+    result.final || ""
+  );
+
+  return result;
+}
+
+function saveOptimizedTextFromSidebar(text) {
+  PropertiesService.getDocumentProperties().setProperty(
+    "latestOptimizedText",
+    text || ""
   );
 
   return {
     success: true,
-    original: result.original,
-    grammar_corrected: result.grammar_corrected,
-    rewritten: result.rewritten,
-    final: result.final,
-    metrics: result.metrics,
-    repetition_analysis: result.repetition_analysis,
-    redundancy_report: result.redundancy_report
+    message: "Optimized text saved."
   };
 }
 
@@ -121,6 +175,14 @@ function acceptRewrite() {
   }
 
   const rangeElements = selection.getRangeElements();
+
+  if (!rangeElements.length) {
+    return {
+      success: false,
+      message: "No selected text found."
+    };
+  }
+
   const firstRangeElement = rangeElements[0];
   const firstElement = firstRangeElement.getElement().asText();
 

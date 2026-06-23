@@ -6,37 +6,147 @@
     <style>
       body {
         font-family: Arial, sans-serif;
-        padding: 12px;
+        padding: 14px;
+        background: #f7f8fa;
+        color: #222;
+      }
+
+      h2 {
+        margin-top: 0;
+        font-size: 20px;
+      }
+
+      .subtitle {
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 12px;
       }
 
       button {
         width: 100%;
-        padding: 10px;
-        margin-top: 8px;
+        padding: 11px;
+        margin-top: 10px;
         cursor: pointer;
+        border: none;
+        border-radius: 6px;
+        background: #1a73e8;
+        color: white;
+        font-weight: bold;
+      }
+
+      button.secondary {
+        background: #188038;
       }
 
       select {
         width: 100%;
-        padding: 8px;
-        margin-top: 8px;
+        padding: 9px;
+        margin-top: 6px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
       }
 
       textarea {
         width: 100%;
-        min-height: 120px;
+        min-height: 150px;
         margin-top: 8px;
+        padding: 9px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        resize: vertical;
+        box-sizing: border-box;
+        font-size: 13px;
+        line-height: 1.45;
       }
 
-      .section {
-        margin-top: 16px;
-        padding-top: 10px;
-        border-top: 1px solid #ddd;
+      .card {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 12px;
+        margin-top: 14px;
       }
 
       .label {
         font-weight: bold;
+        margin-bottom: 6px;
+        font-size: 14px;
+      }
+
+      .status {
+        margin-top: 10px;
+        padding: 8px;
+        border-radius: 6px;
+        font-size: 12px;
+      }
+
+      .error {
+        color: #b00020;
+        background: #fdecea;
+        font-weight: bold;
+      }
+
+      .success {
+        color: #137333;
+        background: #e6f4ea;
+        font-weight: bold;
+      }
+
+      .loading {
+        color: #444;
+        background: #fff7e0;
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
         margin-top: 8px;
+      }
+
+      .metric {
+        background: #f1f3f4;
+        border-radius: 6px;
+        padding: 8px;
+        font-size: 12px;
+      }
+
+      .metric-number {
+        font-size: 18px;
+        font-weight: bold;
+        display: block;
+      }
+
+      .issue {
+        padding: 8px;
+        border-radius: 6px;
+        background: #f8f9fa;
+        margin-top: 6px;
+        border-left: 4px solid #1a73e8;
+        font-size: 12px;
+      }
+
+      .issue.warning {
+        border-left-color: #fbbc04;
+        background: #fff8e1;
+      }
+
+      .issue-title {
+        font-weight: bold;
+        margin-bottom: 4px;
+      }
+
+      .muted {
+        color: #777;
+        font-size: 12px;
+      }
+
+      .sentence-box {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 7px;
+        margin-top: 5px;
       }
 
       .small {
@@ -45,116 +155,317 @@
         white-space: pre-wrap;
       }
 
-      .error {
-        color: red;
-        font-weight: bold;
+      details {
+        margin-top: 8px;
       }
 
-      .success {
-        color: green;
+      summary {
+        cursor: pointer;
         font-weight: bold;
+        font-size: 13px;
       }
     </style>
   </head>
 
   <body>
-    <h3>AI Writing Assistant</h3>
+    <h2>Writing Assistant</h2>
 
-    <label class="label">Mode</label>
-    <select id="mode">
-      <option value="concise">Concise</option>
-      <option value="standard">Standard</option>
-      <option value="academic">Academic</option>
-      <option value="fluent">Fluent</option>
-    </select>
+    <div class="subtitle">
+      Step 1: analyze selected text. Step 2: review redundant pairs. Step 3: rewrite and replace.
+    </div>
 
-    <button onclick="runAnalysis()">Analyze + Rewrite Selected Text</button>
+    <div class="card">
+      <div class="label">Rewrite Mode</div>
 
-    <div id="status" class="small"></div>
+      <select id="mode">
+        <option value="concise">Concise</option>
+        <option value="standard">Standard</option>
+        <option value="academic">Academic</option>
+        <option value="fluent">Fluent</option>
+      </select>
 
-    <div class="section">
+      <button onclick="runAnalysis()">1. Analyze Selected Text</button>
+      <button class="secondary" onclick="runRewrite()">2. Rewrite After Review</button>
+
+      <div id="status" class="status loading" style="display:none;"></div>
+    </div>
+
+    <div class="card">
       <div class="label">Original Text</div>
       <textarea id="original" readonly></textarea>
     </div>
 
-    <div class="section">
-      <div class="label">Analysis</div>
-      <div id="analysis" class="small"></div>
+    <div class="card">
+      <div class="label">Analysis Summary</div>
+
+      <div class="summary-grid">
+        <div class="metric">
+          <span id="grammarErrorCount" class="metric-number">0</span>
+          Grammar errors
+        </div>
+
+        <div class="metric">
+          <span id="pleonasmCount" class="metric-number">0</span>
+          Pleonasms
+        </div>
+
+        <div class="metric">
+          <span id="repeatCount" class="metric-number">0</span>
+          Repeated words
+        </div>
+
+        <div class="metric">
+          <span id="userChoiceCount" class="metric-number">0</span>
+          Needs review
+        </div>
+      </div>
+
+      <div id="importantIssues" style="margin-top:12px;"></div>
+
+      <details>
+        <summary>Show detailed analysis</summary>
+        <div id="details" class="small"></div>
+      </details>
     </div>
 
-    <div class="section">
-      <div class="label">Final Output</div>
+    <div class="card">
+      <div class="label">Optimized Text</div>
+
       <textarea id="finalText"></textarea>
-      <button onclick="acceptRewrite()">Accept and Replace Selected Text</button>
+
+      <button class="secondary" onclick="acceptRewrite()">
+        Accept and Replace Selected Text
+      </button>
+
+      <div class="muted" style="margin-top:8px;">
+        Keep the original text selected in the document before replacing.
+      </div>
     </div>
 
     <script>
-      function runAnalysis() {
-        document.getElementById("status").innerHTML = "Processing...";
-        document.getElementById("status").className = "small";
+      let latestCandidates = [];
 
-        const mode = document.getElementById("mode").value;
+      function setStatus(message, type) {
+        const status = document.getElementById("status");
+        status.style.display = "block";
+        status.innerHTML = message;
+        status.className = "status " + type;
+      }
+
+      function safeArray(value) {
+        return Array.isArray(value) ? value : [];
+      }
+
+      function safeObject(value) {
+        return value && typeof value === "object" ? value : {};
+      }
+
+      function countObjectKeys(obj) {
+        return Object.keys(safeObject(obj)).length;
+      }
+
+      function formatGrammarMatches(matches) {
+        if (!matches.length) {
+          return "<div class='muted'>No grammar errors detected.</div>";
+        }
+
+        return matches.map(function(match, index) {
+          const wrong = match.wrong_text || "";
+          const suggestions = match.suggestions || [];
+
+          return (
+            "<div class='issue'>" +
+              "<div class='issue-title'>Grammar error " + (index + 1) + "</div>" +
+              (wrong ? "<div><b>Detected:</b> " + wrong + "</div>" : "") +
+              (suggestions.length ? "<div><b>Suggestion:</b> " + suggestions.join(", ") + "</div>" : "") +
+              "<div class='muted'>" + (match.message || "") + "</div>" +
+            "</div>"
+          );
+        }).join("");
+      }
+
+      function formatPleonasms(pleonasms) {
+        if (!pleonasms.length) {
+          return "<div class='muted'>No pleonasms detected.</div>";
+        }
+
+        return pleonasms.map(function(item) {
+          return (
+            "<div class='issue'>" +
+              "<div class='issue-title'>Pleonasm: " + (item.phrase || "") + "</div>" +
+              "<div><b>Suggested:</b> " + (item.replacement || "") + "</div>" +
+              "<div class='muted'>" + (item.explanation || "") + "</div>" +
+            "</div>"
+          );
+        }).join("");
+      }
+
+      function formatRepeatedWords(repeatedWords) {
+        const entries = Object.entries(safeObject(repeatedWords));
+
+        if (!entries.length) {
+          return "<div class='muted'>No repeated words detected.</div>";
+        }
+
+        return entries.map(function(pair) {
+          return (
+            "<div class='issue'>" +
+              "<div class='issue-title'>Repeated word: " + pair[0] + "</div>" +
+              "<div>Occurrences: " + pair[1] + "</div>" +
+            "</div>"
+          );
+        }).join("");
+      }
+
+      function formatDecisionCandidates(candidates) {
+        if (!candidates.length) {
+          return "<div class='muted'>No sentence pairs require manual review.</div>";
+        }
+
+        return candidates.map(function(pair) {
+          return (
+            "<div class='issue warning'>" +
+              "<div class='issue-title'>Manual review required</div>" +
+              "<div><b>Similarity:</b> " + pair.similarity + "</div>" +
+
+              "<div class='sentence-box'><b>A:</b> " + pair.sentence_1 + "</div>" +
+              "<div class='sentence-box'><b>B:</b> " + pair.sentence_2 + "</div>" +
+
+              "<label><input type='radio' name='decision_" + pair.id + "' value='keep_1'> Keep A</label><br>" +
+              "<label><input type='radio' name='decision_" + pair.id + "' value='keep_2'> Keep B</label><br>" +
+              "<label><input type='radio' name='decision_" + pair.id + "' value='keep_both' checked> Keep both</label>" +
+            "</div>"
+          );
+        }).join("");
+      }
+
+      function collectDecisions() {
+        const decisions = {};
+
+        latestCandidates.forEach(function(pair) {
+          const radios = document.getElementsByName("decision_" + pair.id);
+
+          for (let i = 0; i < radios.length; i++) {
+            if (radios[i].checked) {
+              decisions[pair.id] = radios[i].value;
+            }
+          }
+        });
+
+        return decisions;
+      }
+
+      function buildUsefulSummary(result) {
+        const repetition = safeObject(result.repetition_analysis);
+        const redundancy = safeObject(result.redundancy_report);
+
+        const grammarMatches = safeArray(result.grammar_matches);
+        const pleonasms = safeArray(redundancy.pleonasms);
+        const repeatedWords = safeObject(repetition.repeated_words);
+
+        latestCandidates = safeArray(result.user_choice_candidates);
+
+        document.getElementById("grammarErrorCount").innerHTML = grammarMatches.length;
+        document.getElementById("pleonasmCount").innerHTML = pleonasms.length;
+        document.getElementById("repeatCount").innerHTML = countObjectKeys(repeatedWords);
+        document.getElementById("userChoiceCount").innerHTML = latestCandidates.length;
+
+        let html = "";
+
+        html += "<div class='label'>Grammar corrections</div>";
+        html += formatGrammarMatches(grammarMatches);
+
+        html += "<div class='label' style='margin-top:12px;'>Pleonasms</div>";
+        html += formatPleonasms(pleonasms);
+
+        html += "<div class='label' style='margin-top:12px;'>Repeated words</div>";
+        html += formatRepeatedWords(repeatedWords);
+
+        html += "<div class='label' style='margin-top:12px;'>Redundant sentence decisions</div>";
+        html += formatDecisionCandidates(latestCandidates);
+
+        document.getElementById("importantIssues").innerHTML = html;
+
+        document.getElementById("details").innerHTML =
+          JSON.stringify(result, null, 2);
+      }
+
+      function runAnalysis() {
+        setStatus("Analyzing selected text...", "loading");
 
         google.script.run
           .withSuccessHandler(function(result) {
             if (!result.success) {
-              document.getElementById("status").innerHTML = result.message;
-              document.getElementById("status").className = "error";
+              setStatus(result.message, "error");
               return;
             }
 
-            document.getElementById("status").innerHTML = "Analysis complete.";
-            document.getElementById("status").className = "success";
+            setStatus("Analysis complete. Review the issues, then click rewrite.", "success");
 
-            document.getElementById("original").value = result.original;
-            document.getElementById("finalText").value = result.final;
+            document.getElementById("original").value = result.original || "";
+            document.getElementById("finalText").value = "";
 
-            const repetition = result.repetition_analysis || {};
-            const redundancy = result.redundancy_report || {};
-            const metrics = result.metrics || {};
-
-            document.getElementById("analysis").innerHTML =
-              "Repeated words:\n" +
-              JSON.stringify(repetition.repeated_words || {}, null, 2) +
-              "\n\nLemma repetition:\n" +
-              JSON.stringify(repetition.lemma_repetition || {}, null, 2) +
-              "\n\nSynonym repetition:\n" +
-              JSON.stringify(repetition.synonym_repetition || {}, null, 2) +
-              "\n\nPleonasms:\n" +
-              JSON.stringify(redundancy.pleonasms || [], null, 2) +
-              "\n\nSimilar words:\n" +
-              JSON.stringify(redundancy.similar_words || [], null, 2) +
-              "\n\nRedundant sentences:\n" +
-              JSON.stringify(redundancy.redundant_sentences || [], null, 2) +
-              "\n\nGrammar metrics:\n" +
-              JSON.stringify(metrics, null, 2);
+            buildUsefulSummary(result);
           })
           .withFailureHandler(function(error) {
-            document.getElementById("status").innerHTML = error.message;
-            document.getElementById("status").className = "error";
+            setStatus(error.message, "error");
           })
-          .analyzeAndRewriteSelectedText(mode);
+          .analyzeSelectedText();
+      }
+
+      function runRewrite() {
+        setStatus("Rewriting text with selected decisions...", "loading");
+
+        const mode = document.getElementById("mode").value;
+        const decisions = collectDecisions();
+
+        google.script.run
+          .withSuccessHandler(function(result) {
+            if (!result.success) {
+              setStatus(result.message, "error");
+              return;
+            }
+
+            setStatus("Rewrite complete. Review the optimized text below.", "success");
+
+            document.getElementById("finalText").value = result.final || "";
+          })
+          .withFailureHandler(function(error) {
+            setStatus(error.message, "error");
+          })
+          .rewriteAfterReview(mode, decisions);
       }
 
       function acceptRewrite() {
         const finalText = document.getElementById("finalText").value;
 
         google.script.run
-          .withSuccessHandler(function(result) {
-            if (!result.success) {
-              document.getElementById("status").innerHTML = result.message;
-              document.getElementById("status").className = "error";
+          .withSuccessHandler(function(saveResult) {
+            if (!saveResult.success) {
+              setStatus(saveResult.message, "error");
               return;
             }
 
-            document.getElementById("status").innerHTML = result.message;
-            document.getElementById("status").className = "success";
+            setStatus("Replacing selected text...", "loading");
+
+            google.script.run
+              .withSuccessHandler(function(result) {
+                if (!result.success) {
+                  setStatus(result.message, "error");
+                  return;
+                }
+
+                setStatus(result.message, "success");
+              })
+              .withFailureHandler(function(error) {
+                setStatus(error.message, "error");
+              })
+              .acceptRewrite();
           })
           .withFailureHandler(function(error) {
-            document.getElementById("status").innerHTML = error.message;
-            document.getElementById("status").className = "error";
+            setStatus(error.message, "error");
           })
-          .acceptRewrite();
+          .saveOptimizedTextFromSidebar(finalText);
       }
     </script>
   </body>
