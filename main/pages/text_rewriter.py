@@ -2,71 +2,69 @@ import re
 import ollama
 
 
-def split_sentences(text):
-    """
-    Split text into individual sentences.
-    """
+def split_sentences(text: str) -> list[str]:
     return [
-        sentence.strip()
-        for sentence in re.split(r"(?<=[.!?])\s+", text.strip())
-        if sentence.strip()
+        s.strip()
+        for s in re.split(r"(?<=[.!?])\s+", text.strip())
+        if s.strip()
     ]
+
+
+def _normalize(s: str) -> str:
+    return re.sub(r"\s+", " ", s.strip())
 
 
 class PreMerger:
     """
     Pre-processes redundant sentence pairs before LLM rewriting.
 
-    Updated behavior:
-    - It does NOT automatically delete sentences.
-    - Very similar sentences are returned as user-choice candidates.
-    - Moderately similar sentences are returned as merge candidates.
+    - Sentences >= user_choice_threshold: returned as user_choice_candidates
+      (LLM keeps both unless the user has already decided via apply_user_decisions)
+    - Sentences in [merge_threshold, user_choice_threshold): returned as
+      merge_candidates for the LLM to attempt merging
     """
 
     def __init__(
         self,
         nlp=None,
-        user_choice_threshold=0.80,
-        merge_threshold=0.70,
+        user_choice_threshold: float = 0.85,
+        merge_threshold:       float = 0.82,
     ):
-        self.nlp = nlp
+        self.nlp                   = nlp
         self.user_choice_threshold = user_choice_threshold
-        self.merge_threshold = merge_threshold
+        self.merge_threshold       = merge_threshold
+        self.stop_words            = nlp.Defaults.stop_words if nlp else set()
 
-        if self.nlp:
-            self.stop_words = self.nlp.Defaults.stop_words
-        else:
-            self.stop_words = set()
+    def merge(
+        self,
+        text:                str,
+        redundant_sentences: list,
+        repeated_words:      dict | list,
+    ) -> tuple:
+        # Normalise the working text and build a lookup for fast membership tests
+        norm_text      = _normalize(text)
+        sentences      = split_sentences(norm_text)
+        sentence_set   = {_normalize(s) for s in sentences}
 
-    def merge(self, text, redundant_sentences, repeated_words):
-        """
-        Analyze redundant sentence pairs without deleting them automatically.
-        """
-        sentences = split_sentences(text)
+        pairs = sorted(redundant_sentences, key=lambda x: -x[2])
 
-        pairs = sorted(
-            redundant_sentences,
-            key=lambda item: -item[2],
-        )
-
-        merge_candidates = []
+        merge_candidates       = []
         user_choice_candidates = []
-        deleted_pairs = []
-        dropped = set()
+        dropped                = set()
 
         for pair in pairs:
-            sent_a = pair[0]
-            sent_b = pair[1]
-            score = pair[2]
-            category = pair[3] if len(pair) > 3 else ""
+            sent_a = _normalize(pair[0])
+            sent_b = _normalize(pair[1])
+            score  = pair[2]
 
-            if sent_a not in sentences or sent_b not in sentences:
+            # Skip if either sentence is no longer in the (normalised) text
+            if sent_a not in sentence_set or sent_b not in sentence_set:
                 continue
 
             if score >= self.user_choice_threshold:
                 user_choice_candidates.append({
-                    "sentence_1": sent_a,
-                    "sentence_2": sent_b,
+                    "sentence_1": pair[0],
+                    "sentence_2": pair[1],
                     "similarity": round(score, 2),
                     "action": (
                         "scelta_utente: scegliere la frase A, "
@@ -76,8 +74,8 @@ class PreMerger:
 
             elif self.merge_threshold <= score < self.user_choice_threshold:
                 merge_candidates.append({
-                    "sentence_1": sent_a,
-                    "sentence_2": sent_b,
+                    "sentence_1": pair[0],
+                    "sentence_2": pair[1],
                     "similarity": round(score, 2),
                     "action": (
                         "unire solo se migliora la chiarezza; "
@@ -85,16 +83,18 @@ class PreMerger:
                     ),
                 })
 
-        clean_sentences = [
-            sentence
-            for sentence in sentences
-            if sentence not in dropped
-        ]
+        clean_sentences = [s for s in sentences if _normalize(s) not in dropped]
+
+        # Collect repeated word lemmas into a flat set for resolved-repeat check
+        if isinstance(repeated_words, dict):
+            rw_set = set(repeated_words.keys())
+        else:
+            rw_set = {w for item in repeated_words for w in item.get("words", [])}
 
         resolved_repeats = self._find_resolved_repeats(
             dropped=dropped,
             remaining=clean_sentences,
-            repeated_words=repeated_words,
+            repeated_words=rw_set,
         )
 
         merged_text = " ".join(clean_sentences)
@@ -103,57 +103,40 @@ class PreMerger:
             merged_text,
             resolved_repeats,
             merge_candidates,
-            deleted_pairs,
+            [],                     # deleted_pairs — always empty (no auto-delete)
             user_choice_candidates,
         )
 
-    def _content_words(self, sentence):
-        """
-        Extract meaningful content lemmas from a sentence.
-        """
+    def _content_words(self, sentence: str) -> set[str]:
         if self.nlp:
             doc = self.nlp(sentence)
-
             return {
-                token.lemma_.lower()
-                for token in doc
-                if (
-                    token.pos_ in {"NOUN", "VERB", "ADJ", "ADV", "PROPN"}
-                    and not token.is_stop
-                    and not token.is_punct
-                )
+                t.lemma_.lower()
+                for t in doc
+                if t.pos_ in {"NOUN", "VERB", "ADJ", "ADV", "PROPN"}
+                and not t.is_stop
+                and not t.is_punct
             }
-
         tokens = re.findall(r"[a-zà-ÿ]+", sentence.lower())
+        return {t for t in tokens if t not in self.stop_words}
 
+    def _find_resolved_repeats(
+        self,
+        dropped:        set,
+        remaining:      list[str],
+        repeated_words: set[str],
+    ) -> set[str]:
+        remaining_text = " ".join(remaining).lower()
         return {
-            token
-            for token in tokens
-            if token not in self.stop_words
+            word
+            for word in repeated_words
+            if len(re.findall(rf"\b{re.escape(word)}\b", remaining_text)) <= 1
         }
 
-    def _find_resolved_repeats(self, dropped, remaining, repeated_words):
-        """
-        Recalculate which repetitions were resolved.
-        Since this version does not delete automatically,
-        this usually returns an empty set.
-        """
-        remaining_text = " ".join(remaining).lower()
-        resolved = set()
 
-        for word in repeated_words:
-            count = len(
-                re.findall(
-                    rf"\b{re.escape(word)}\b",
-                    remaining_text,
-                )
-            )
-
-            if count <= 1:
-                resolved.add(word)
-
-        return resolved
-
+# ---------------------------------------------------------------------------
+# LLM output cleaning
+# ---------------------------------------------------------------------------
 
 _PREAMBLE_PATTERNS = [
     r"^ecco(?: il)? testo riscritto[:\-]?\s*",
@@ -163,7 +146,6 @@ _PREAMBLE_PATTERNS = [
     r"^ho riscritto il testo[:\-]?\s*",
     r"^certo[,!]?\s*ecco[^:]*:\s*",
 ]
-
 
 _POSTAMBLE_MARKERS = [
     r"^modifiche",
@@ -177,40 +159,28 @@ _POSTAMBLE_MARKERS = [
 ]
 
 
-def clean_llm_output(text):
-    """
-    Remove conversational preambles, explanations, and bullet lists.
-    """
+def clean_llm_output(text: str) -> str:
     text = text.strip()
-
     for pattern in _PREAMBLE_PATTERNS:
-        text = re.sub(
-            pattern,
-            "",
-            text,
-            flags=re.IGNORECASE,
-        )
+        text = re.sub(pattern, "", text, flags=re.IGNORECASE)
 
-    lines = text.strip().splitlines()
+    lines       = text.strip().splitlines()
     clean_lines = []
-
     for line in lines:
         stripped = line.strip()
-
-        if any(
-            re.match(pattern, stripped, re.IGNORECASE)
-            for pattern in _POSTAMBLE_MARKERS
-        ):
+        if any(re.match(p, stripped, re.IGNORECASE) for p in _POSTAMBLE_MARKERS):
             break
-
         clean_lines.append(line)
 
     text = "\n".join(clean_lines).strip()
     text = re.sub(r"^\s*[\*\-]\s+.+$", "", text, flags=re.MULTILINE)
     text = re.sub(r"\n{3,}", "\n\n", text)
-
     return text.strip()
 
+
+# ---------------------------------------------------------------------------
+# Prompt builder
+# ---------------------------------------------------------------------------
 
 SYSTEM_PROMPT = (
     "Sei un revisore professionale di testi italiani. "
@@ -222,101 +192,82 @@ SYSTEM_PROMPT = (
     "Restituisci solo il testo riscritto."
 )
 
+_STYLE_MAP = {
+    "concise":  "Rendi il testo più breve e chiaro, senza eliminare informazioni importanti.",
+    "academic": "Usa uno stile formale e chiaro, evitando parole inutilmente complesse.",
+    "fluent":   "Rendi il testo naturale e scorrevole, usando un lessico semplice.",
+    "standard": "Usa un italiano chiaro, diretto e professionale.",
+}
+
 
 def build_prompt(
-    pre_merged_text,
-    repetition_analysis,
-    redundancy_report,
-    resolved_repeats,
-    merge_candidates,
-    deleted_pairs,
-    user_choice_candidates,
-    mode,
-):
-    """
-    Build the prompt for Ollama using the analysis results.
-    """
+    pre_merged_text:        str,
+    repetition_analysis:    dict,
+    redundancy_report:      dict,
+    resolved_repeats:       set,
+    merge_candidates:       list,
+    deleted_pairs:          list,
+    user_choice_candidates: list,
+    mode:                   str,
+) -> str:
+    style = _STYLE_MAP.get(mode, _STYLE_MAP["standard"])
 
-    style = {
-        "concise": (
-            "Rendi il testo più breve e chiaro, senza eliminare informazioni importanti."
-        ),
-        "academic": (
-            "Usa uno stile formale e chiaro, evitando parole inutilmente complesse."
-        ),
-        "fluent": (
-            "Rendi il testo naturale e scorrevole, usando un lessico semplice."
-        ),
-        "standard": (
-            "Usa un italiano chiaro, diretto e professionale."
-        ),
-    }.get(mode, "Usa un italiano chiaro, diretto e professionale.")
-
-    repeated_raw = repetition_analysis.get("repeated_words", {})
-
+    repeated_raw  = repetition_analysis.get("repeated_words", {})
     still_repeated = {
-        word: count
-        for word, count in repeated_raw.items()
-        if count >= 2 and word not in resolved_repeats
+        w: c for w, c in (
+            repeated_raw.items() if isinstance(repeated_raw, dict)
+            else {w: 2 for item in repeated_raw for w in item.get("words", [])}.items()
+        )
+        if c >= 2 and w not in resolved_repeats
     }
-
     repeated_str = ", ".join(
-        f"'{word}' (x{count})"
-        for word, count in still_repeated.items()
+        f"'{w}' (x{c})" for w, c in still_repeated.items()
     ) or "nessuna"
 
-    pleonasm_items = redundancy_report.get("pleonasms", [])
-
     pleonasm_str = "\n".join(
-        f"  '{item['phrase']}' → '{item['replacement']}'"
-        for item in pleonasm_items
+        f"  '{p['phrase']}' → '{p['replacement']}'"
+        for p in redundancy_report.get("pleonasms", [])
     ) or "  nessuno"
 
-    raw_pairs = redundancy_report.get("similar_words", [])
-
-    filtered_pairs = [
-        (a, b, score)
-        for a, b, score in raw_pairs
-        if 0.75 <= score < 1.00
-    ][:6]
-
     sim_pairs_str = "\n".join(
-        f"  '{a}' e '{b}' (punteggio {score:.2f})"
-        for a, b, score in filtered_pairs
-    ) or "  nessuna"
+        f"  '{a}' e '{b}' (punteggio {s:.2f})"
+        for a, b, s in redundancy_report.get("similar_words", [])
+        if 0.75 <= s < 1.00
+    )[:6 * 60] or "  nessuna"       # rough cap on prompt length
 
-    deleted_str = ""
+    deleted_str = "  nessuna"
+    if deleted_pairs:
+        deleted_str = ""
+        for idx, item in enumerate(deleted_pairs, 1):
+            deleted_str += (
+                f"\n  Coppia {idx} (similarità {item['similarity']}):\n"
+                f"    Mantenuta: {item['kept']}\n"
+                f"    Rimossa: {item['removed']}\n"
+            )
 
-    for index, item in enumerate(deleted_pairs, 1):
-        deleted_str += f"\n  Coppia {index} (similarità {item['similarity']}):\n"
-        deleted_str += f"    Mantenuta: {item['kept']}\n"
-        deleted_str += f"    Rimossa come duplicato: {item['removed']}\n"
+    merge_str = "  nessuna"
+    if merge_candidates:
+        merge_str = ""
+        for idx, item in enumerate(merge_candidates, 1):
+            merge_str += (
+                f"\n  Coppia {idx} (similarità {item['similarity']}):\n"
+                f"    A: {item['sentence_1']}\n"
+                f"    B: {item['sentence_2']}\n"
+                f"    Azione: {item['action']}\n"
+            )
 
-    deleted_str = deleted_str or "  nessuna"
-
-    merge_candidate_str = ""
-
-    for index, item in enumerate(merge_candidates, 1):
-        merge_candidate_str += f"\n  Coppia {index} (similarità {item['similarity']}):\n"
-        merge_candidate_str += f"    A: {item['sentence_1']}\n"
-        merge_candidate_str += f"    B: {item['sentence_2']}\n"
-        merge_candidate_str += f"    Azione: {item['action']}\n"
-
-    merge_candidate_str = merge_candidate_str or "  nessuna"
-
-    user_choice_str = ""
-
-    for index, item in enumerate(user_choice_candidates, 1):
-        user_choice_str += f"\n  Coppia {index} (similarità {item['similarity']}):\n"
-        user_choice_str += f"    A: {item['sentence_1']}\n"
-        user_choice_str += f"    B: {item['sentence_2']}\n"
-        user_choice_str += (
-            "    Azione: non eliminare automaticamente; "
-            "se non esiste una scelta esplicita dell'utente, mantieni entrambe "
-            "oppure fondile senza perdere informazioni.\n"
-        )
-
-    user_choice_str = user_choice_str or "  nessuna"
+    user_choice_str = "  nessuna"
+    if user_choice_candidates:
+        user_choice_str = ""
+        for idx, item in enumerate(user_choice_candidates, 1):
+            user_choice_str += (
+                f"\n  Coppia {idx} (similarità {item['similarity']}):\n"
+                f"    A: {item['sentence_1']}\n"
+                f"    B: {item['sentence_2']}\n"
+                "    Azione: non eliminare automaticamente; "
+                "se non esiste una scelta esplicita dell'utente, mantieni entrambe "
+                "oppure fondile senza perdere informazioni.\n"
+            )
 
     return f"""Stile di riscrittura:
 {style}
@@ -336,7 +287,7 @@ ANALISI USATA PRIMA DELLA RISCRITTURA:
 {deleted_str}
 
 5. Frasi correlate che possono essere unite:
-{merge_candidate_str}
+{merge_str}
 
 6. Frasi molto simili che richiedono scelta dell'utente:
 {user_choice_str}
@@ -354,24 +305,26 @@ REGOLE:
 - Mantieni tutte le informazioni importanti.
 - Non aggiungere nuove informazioni.
 - Restituisci solo il testo finale riscritto.
+- Le frasi scelte dall'utente sono vincolanti: devono comparire nel testo finale senza modifiche.
+- Non modificare, eliminare o spostare i placeholder nel formato [[KEEP_SENTENCE_X]].
 
 TESTO:
 {pre_merged_text.strip()}"""
 
 
-class TextRewriter:
-    """
-    Coordinates pre-merge analysis, prompt generation, and Ollama rewriting.
-    """
+# ---------------------------------------------------------------------------
+# Rewriter
+# ---------------------------------------------------------------------------
 
+class TextRewriter:
     def __init__(
         self,
-        model="llama3.1",
-        nlp=None,
-        user_choice_threshold=0.90,
-        merge_threshold=0.80,
+        model:                 str   = "llama3.1",
+        nlp                         = None,
+        user_choice_threshold: float = 0.90,
+        merge_threshold:       float = 0.82,
     ):
-        self.model = model
+        self.model  = model
         self.merger = PreMerger(
             nlp=nlp,
             user_choice_threshold=user_choice_threshold,
@@ -380,11 +333,11 @@ class TextRewriter:
 
     def rewrite(
         self,
-        text,
-        repetition_analysis,
-        redundancy_report,
-        mode="standard",
-    ):
+        text:                str,
+        repetition_analysis: dict,
+        redundancy_report:   dict,
+        mode:                str = "standard",
+    ) -> str:
         (
             pre_merged,
             resolved_repeats,
@@ -393,14 +346,8 @@ class TextRewriter:
             user_choice_candidates,
         ) = self.merger.merge(
             text=text,
-            redundant_sentences=redundancy_report.get(
-                "redundant_sentences",
-                [],
-            ),
-            repeated_words=repetition_analysis.get(
-                "repeated_words",
-                {},
-            ),
+            redundant_sentences=redundancy_report.get("redundant_sentences", []),
+            repeated_words=repetition_analysis.get("repeated_words", {}),
         )
 
         prompt = build_prompt(
@@ -417,20 +364,10 @@ class TextRewriter:
         response = ollama.chat(
             model=self.model,
             messages=[
-                {
-                    "role": "system",
-                    "content": SYSTEM_PROMPT,
-                },
-                {
-                    "role": "user",
-                    "content": prompt,
-                },
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user",   "content": prompt},
             ],
-            options={
-                "temperature": 0.1,
-            },
+            options={"temperature": 0.1},
         )
 
-        raw_output = response["message"]["content"]
-
-        return clean_llm_output(raw_output)
+        return clean_llm_output(response["message"]["content"])
