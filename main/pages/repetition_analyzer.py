@@ -1,18 +1,27 @@
 import re
 import spacy
+import nltk
 from nltk.corpus import wordnet as wn
 from collections import Counter, defaultdict
 
+nltk.download("wordnet", quiet=True)
+nltk.download("omw-1.4", quiet=True)
+
+def get_italian_synonyms(word):
+    synonyms = set()
+    for syn in wn.synsets(word, lang='ita'):
+        for lemma in syn.lemma_names('ita'):
+            clean_synonym = lemma.replace('_', ' ').lower()
+            synonyms.add(clean_synonym)
+    return synonyms
 
 class RepetitionAnalyzer:
     def __init__(self, nlp=None):
-        # Load the large pretrained spaCy model for Italian language processing
         self.nlp = nlp or spacy.load("it_core_news_lg")
-        # Extract the default set of Italian stop words (e.g., "il", "di", "su")
         self.stop_words = self.nlp.Defaults.stop_words
+        self._SYNONYM_SKIP = {"ieri", "sera", "molto", "anche", "però", "ormai"}
 
     def tokenize(self, text):
-
         """
         Splits text into lowercase word tokens, matching any letter sequences 
         including Italian accented characters (À-ÿ).
@@ -20,7 +29,6 @@ class RepetitionAnalyzer:
         return re.findall(r"\b[a-zA-ZÀ-ÿ]+\b", text.lower())
 
     def get_content_words(self, text):
-
         """
         Filters out tokens to isolate meaningful content words. 
         Excludes default stop words and words consisting of 2 characters or fewer.
@@ -44,25 +52,18 @@ class RepetitionAnalyzer:
         )
 
     def remove_repeated_sentences(self, text):
-
         """
         Splits text into individual sentences and removes any exact 
         duplicate sentences while preserving their original order.
         """
-        # Split text on whitespace following sentence-ending punctuation marks (. ! ?)
         sentences = re.split(r"(?<=[.!?])\s+", text.strip())
-
         seen = set()
         result = []
-
         for sentence in sentences:
-            # Normalize for case and whitespace to ensure fair comparison
             normalized = sentence.lower().strip()
-
             if normalized not in seen:
                 seen.add(normalized)
                 result.append(sentence)
-
         return " ".join(result)
 
     def clean(self, text):
@@ -80,12 +81,7 @@ class RepetitionAnalyzer:
         counts, filtering out words that only appeared once.
         """
         counts = Counter(self.get_content_words(text))
-
-        return {
-            word: count
-            for word, count in counts.items()
-            if count > 1
-        }
+        return {word: count for word, count in counts.items() if count > 1}
 
     def top_repeated_words(self, text, limit=10):
         """
@@ -93,7 +89,6 @@ class RepetitionAnalyzer:
         sorted by highest frequency first.
         """
         counts = Counter(self.get_content_words(text))
-
         return [
             (word, count)
             for word, count in counts.most_common(limit)
@@ -106,10 +101,8 @@ class RepetitionAnalyzer:
         Higher percentages denote a richer vocabulary selection with fewer repetitions.
         """
         words = self.get_content_words(text)
-
         if not words:
             return 100.0
-        # Unique content words divided by total content words
         return round(len(set(words)) / len(words) * 100, 2)
 
     def repetition_ratio(self, text):
@@ -118,14 +111,10 @@ class RepetitionAnalyzer:
         (e.g., if a word appears 3 times, 2 of those instances are marked redundant).
         """
         words = self.get_content_words(text)
-
         if not words:
             return 0.0
-
         repeated = self.repeated_words(text)
-        # Sum the excess counts above 1 for all repeating words
         repeated_total = sum(count - 1 for count in repeated.values())
-
         return round(repeated_total / len(words) * 100, 2)
 
     def highlight_repetition(self, text):
@@ -134,18 +123,14 @@ class RepetitionAnalyzer:
         XML-like `<lexrep>` tags for downstream visual rendering.
         """
         highlighted = text
-
         for word in self.repeated_words(text).keys():
-            # Construct a regex matching whole words to avoid highlighting substrings
             pattern = r"\b(" + re.escape(word) + r")\b"
-
             highlighted = re.sub(
                 pattern,
                 r"<lexrep>\1</lexrep>",
                 highlighted,
                 flags=re.IGNORECASE,
             )
-
         return highlighted
 
     def lemma_repetition(self, text):
@@ -155,9 +140,7 @@ class RepetitionAnalyzer:
         """
         doc = self.nlp(text)
         groups = defaultdict(list)
-
         for token in doc:
-            # target major lexical components, ignoring stop words and punctuation
             if (
                 token.pos_ in {"NOUN", "VERB", "ADJ", "ADV", "PROPN"}
                 and not token.is_stop
@@ -165,13 +148,7 @@ class RepetitionAnalyzer:
             ):
                 lemma = token.lemma_.lower()
                 groups[lemma].append(token.text)
-
-        # Return only the lemma groups containing actual repetitions
-        return {
-            lemma: words
-            for lemma, words in groups.items()
-            if len(words) > 1
-        }
+        return {lemma: words for lemma, words in groups.items() if len(words) > 1}
 
     def get_synonym_key(self, word):
         """
@@ -180,48 +157,83 @@ class RepetitionAnalyzer:
         """
         try:
             lemmas = wn.lemmas(word, lang="ita")
-
             if not lemmas:
                 return word
-            
-            # Retrieve the first structural synset (semantic concept cluster)
             synset = lemmas[0].synset()
             italian_lemmas = synset.lemmas(lang="ita")
-
             if not italian_lemmas:
                 return word
-            
-            # Pick the primary Italian lemma name from the concept cluster as a key
             return italian_lemmas[0].name().lower()
-
         except Exception:
             return word
 
-    def synonym_repetition(self, text):
-        """
-        Identifies conceptual redundancy by grouping content words that share 
-        the same fundamental WordNet synonym representation.
-        """
-        doc = self.nlp(text)
-        groups = defaultdict(list)
+    def synonym_repetition(self, text, window: int = None):
+ #Detects synonym redundancy scoped to individual sentences (default) or within a sliding token window if `window` is given as an int.
 
-        for token in doc:
-            if (
-                token.pos_ in {"NOUN", "VERB", "ADJ", "ADV", "PROPN"}
-                and not token.is_stop
-                and not token.is_punct
-            ):
-                lemma = token.lemma_.lower()
-                # Find the universal synonym group identifier for the word's lemma
-                synonym_key = self.get_synonym_key(lemma)
-                groups[synonym_key].append(token.text)
+        # Split into sentences on common Italian punctuation
+        sentences = re.split(r'(?<=[.!?])\s+', text.strip())
 
-        # Filter out groups that only have single instances of a concept
-        return {
-            key: words
-            for key, words in groups.items()
-            if len(words) > 1
-        }
+        detected_pairs = []
+        already_paired = set()
+
+        for sentence in sentences:
+            cleaned = sentence.lower().replace('.', '').replace(',', '').replace('?', '').replace('!', '')
+            words = cleaned.split()
+
+            for i in range(len(words)):
+                word_a = words[i]
+
+                if len(word_a) <= 3 or word_a in self._SYNONYM_SKIP:
+                    continue
+
+                synonyms_of_a = get_italian_synonyms(word_a)
+
+                # Only compare against words later in the SAME sentence
+                search_range = range(i + 1, len(words))
+
+                # Optionally also check a cross-sentence window
+                if window is not None:
+                    # flatten all words and check by absolute index proximity
+                    # (handled below outside the sentence loop — skip here)
+                    pass
+
+                for j in search_range:
+                    word_b = words[j]
+
+                    if word_b in self._SYNONYM_SKIP or len(word_b) <= 3:
+                        continue
+
+                    if word_a != word_b and word_b in synonyms_of_a:
+                        pair_key = tuple(sorted([word_a, word_b]))
+                        if pair_key not in already_paired:
+                            already_paired.add(pair_key)
+                            detected_pairs.append({
+                                "pair": (word_a, word_b),
+                                "sentence": sentence.strip(),
+                            })
+
+    # Optional: sliding window across sentence boundaries
+        if window is not None:
+            all_words = text.lower().replace('.', '').replace(',', '').split()
+            for i in range(len(all_words)):
+                word_a = all_words[i]
+                if len(word_a) <= 3 or word_a in self._SYNONYM_SKIP:
+                    continue
+                synonyms_of_a = get_italian_synonyms(word_a)
+                for j in range(i + 1, min(i + window + 1, len(all_words))):
+                    word_b = all_words[j]
+                    if len(word_b) <= 3 or word_b in self._SYNONYM_SKIP:
+                        continue
+                    if word_a != word_b and word_b in synonyms_of_a:
+                        pair_key = tuple(sorted([word_a, word_b]))
+                        if pair_key not in already_paired:
+                            already_paired.add(pair_key)
+                            detected_pairs.append({
+                                "pair": (word_a, word_b),
+                                "sentence": f"(cross-sentence window) …{word_a}… …{word_b}…",
+                            })
+
+        return detected_pairs
 
     def analyze(self, text):
         """
@@ -241,6 +253,6 @@ class RepetitionAnalyzer:
             "repetition_ratio": self.repetition_ratio(text),
             "highlighted_repetition": self.highlight_repetition(text),
             "lemma_repetition": lemma_repetition,
-            "synonym_repetition": synonym_repetition,
-            "has_synonym_repetition": len(synonym_repetition) > 0,
+            "synonym_repetition": self.synonym_repetition(text),
+            "has_synonym_repetition": len(self.synonym_repetition(text)) > 0,
         }

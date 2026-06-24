@@ -17,7 +17,7 @@ Yakup Gürer
 
 | Version | Date       | Author(s)                           | Notes                                                          |
 | ------- | ---------- | ----------------------------------- | -------------------------------------------------------------- |
-| 1.0     | 09/06/2026 | Emanuela Ibra <br> Yakup Gürer      | First version of the Design Requirement Specification document |
+| 1.0     | 25/06/2026 | Emanuela Ibra <br> Yakup Gürer      | First version of the Design Requirement Specification document |
 
 ---
 
@@ -55,8 +55,8 @@ The purpose of this document is to describe the design of a software system capa
 
 * Grammar correction
 * Repetition detection
+* Synonim detection
 * Pleonasm detection
-* Semantic similarity analysis
 * Redundancy detection
 * AI-assisted rewriting
 * Google Docs integration
@@ -65,16 +65,18 @@ The system is intended for students, researchers, writers, and professionals who
 
 ## 1.2 Definitions
 
-| Term         | Description                              |
-| ------------ | ---------------------------------------- |
-| NLP          | Natural Language Processing              |
-| LLM          | Large Language Model                     |
-| API          | Application Programming Interface        |
-| spaCy        | NLP library used for linguistic analysis |
-| LanguageTool | Grammar correction engine                |
-| Ollama       | Local platform used to execute LLMs      |
-| Pleonasm     | Redundant linguistic expression          |
-| FastAPI      | Python framework used for REST APIs      |
+| Term               | Description                              |
+| ------------       | ---------------------------------------- |
+| NLP                | Natural Language Processing              |
+| LLM                | Large Language Model                     |
+| API                | Application Programming Interface        |
+| spaCy              | NLP library used for linguistic analysis |
+| nltk               | NLP library used lexical analysis        |
+| SentenceTransformer| NLP library used for semantic similarity |
+| LanguageTool       | Grammar correction engine                |
+| Ollama             | Local platform used to execute LLMs      |
+| Pleonasm           | Redundant linguistic expression          |
+| FastAPI            | Python framework used for REST APIs      |
 
 ## 1.3 Document Overview
 
@@ -113,6 +115,9 @@ The system is also integrated with Google Docs through Google Apps Script, allow
 ### Programming Language
 
 * Python 3.11
+* JavaScript
+* Html
+
 
 ### NLP Technologies
 
@@ -134,6 +139,10 @@ The system is also integrated with Google Docs through Google Apps Script, allow
 * FastAPI
 * Uvicorn
 
+### API Exposure
+
+* ngrok
+
 ### Integration
 
 * Google Apps Script
@@ -141,8 +150,12 @@ The system is also integrated with Google Docs through Google Apps Script, allow
 
 ### Data Storage
 
-* JSON files
-* Italian Pleonasm Dictionary
+*  Json Italian Pleonasm Dictionary
+
+### Supporting Libraries
+
+*  NumPy
+*  functools.lru_cache
 
 ## 2.3 Assumptions and Constraints
 
@@ -271,7 +284,7 @@ Output data includes:
 
 # 4 Grammar Correction Module
 
-The Grammar Correction Module is responsible for identifying and correcting grammatical, orthographic, and syntactic errors.
+The Grammar Correction Module is responsible for identifying, analyzing, and correcting grammatical issues in Italian text. It combines LanguageTool-based correction with spaCy linguistic analysis to provide accurate corrections and detailed feedback.
 
 ### Main Component
 
@@ -280,13 +293,28 @@ GrammarCorrector
 ### Responsibilities
 
 * Execute LanguageTool analysis
-* Collect grammar suggestions
-* Produce corrected text
-* Return detailed error information
+* Automatically apply grammar  corrections
+* Parse and classify detected issues
+* Detect noun-adjective and determiner-noun agreement errors using spaCy
+* Detect subject-verb agreement errors using spaCy
+* Generate corrected and polished text
+* Return structured error information for each detected issue
+
 
 ### Inputs
 
 * Raw Italian text
+
+### Processing Flow
+
+* Validate that the input is not empty.
+* Run LanguageTool grammar and spelling analysis.
+* Generate an automatically corrected version of the text.
+* Parse and classify LanguageTool matches.
+* Perform noun agreement checks using spaCy.
+* Perform subject-verb agreement checks using spaCy.
+* Merge all detected issues into a unified result set.
+
 
 ### Outputs
 
@@ -294,11 +322,16 @@ GrammarCorrector
 * Grammar matches
 * Error statistics
 
+### External Dependencies
+
+* language_tool_python 
+* Italian spaCy model (it_core_news_lg)
+
 ---
 
 # 5 Text Analysis Module
 
-The Text Analysis Module evaluates the quality of the corrected text.
+The Text Analysis Module evaluates the quality of the corrected text by identifying repetition, pleonasms, and semantic redundancies.
 
 ### Components
 
@@ -311,15 +344,24 @@ The Text Analysis Module evaluates the quality of the corrected text.
 
 Detects:
 
+* Direct word repetition
 * Lexical repetition
 * Lemma repetition
 * Synonym repetition
+* Repeated words within the same sentence
+
+Examples:
+
+* casa casa
+* gatto, gatti
+* nuovo, moderno, recente
 
 #### Pleonasm Detection
 
 Detects:
 
 * Static pleonasms from JSON dictionary
+* Lemma-based pleonasm variations
 * Linguistic redundancies
 
 Examples:
@@ -336,40 +378,184 @@ Detects:
 * Similar sentences
 * Repeated concepts
 * Near-synonym word pairs
+* Duplicate sentences
+* Semantically redundant sentences
+* Merge-candidate sentences
 
+#### Text Quality Analysis
+
+Calculates:
+
+* Lexical diversity score
+* Repetition ratio
+* Most repeated words
+* Text cleanliness indicators
+
+#### Similarity Analysis
+
+Uses:
+
+* spaCy word vectors for similar-word detection
+* SentenceTransformer embeddings for sentence similarity analysis
+* Italian WordNet for synonym detection
+
+### Inputs
+
+* Corrected Italian text
+
+### Outputs
+
+* Cleaned text
+* Repeated words
+* Top repeated words
+* Lexical diversity score
+* Repetition ratio
+* Lemma repetitions
+* Synonym repetitions
+* Pleonasm matches
+* Similar word pairs
+* Redundant sentence pairs
+* Redundancy classifications
+* Text quality report
 ---
 
-# 6 AI Rewriting Module
+# 6 Text Rewrite Module
 
-The AI Rewriting Module generates an improved version of the text according to the analysis.
+The Text Rewrite Module rewrites the corrected and analyzed Italian text to improve clarity, fluency, conciseness, and readability.
 
-### Main Component
+### Components
 
-TextRewriter
-
-### Technology
-
-* Ollama
-* Llama 3.1
+* PreMerger
+* TextRewriter
 
 ### Responsibilities
 
-The module receives:
+#### Sentence Pre-Merging
 
-* Corrected text
+Prepares redundant sentence pairs before rewriting.
+
+Detects:
+
+* Sentences that can be merged
+* Sentences that are highly similar
+* Sentences that require user choice
+* Repeated ideas that should not be deleted automatically
+
+Uses similarity thresholds:
+
+* `user_choice_threshold`
+* `merge_threshold`
+
+#### User Choice Handling
+
+Handles very similar sentence pairs carefully.
+
+If two sentences are highly similar, the module does not automatically delete one of them.
+
+Instead, it marks them as user choice candidates, where the user can:
+
+* Keep sentence A
+* Keep sentence B
+* Keep both sentences
+* Merge both sentences without losing information
+
+#### Merge Candidate Detection
+
+Detects sentence pairs that are related but not identical.
+
+These sentences can be merged only when merging improves clarity and does not remove useful information.
+
+Detects:
+
+* Related sentences
+* Repeated concepts
+* Sentences with partial semantic overlap
+* Sentences that can be combined into a clearer sentence
+
+#### Prompt Generation
+
+Builds a structured prompt for the LLM using the previous analysis results.
+
+Uses:
+
 * Repetition analysis
-* Redundancy analysis
 * Pleonasm analysis
+* Similar word pairs
+* Redundant sentence pairs
+* Merge candidates
+* User choice candidates
+* Selected rewrite mode
 
-The information is summarized and injected into a prompt used by the language model.
+The prompt instructs the model to:
 
-The model then:
+* Remove repeated words and ideas
+* Remove pleonasms
+* Merge related sentences when useful
+* Preserve all important information
+* Avoid adding new facts
+* Use simple and natural Italian
+* Return only the rewritten text
 
-* Removes redundancy
-* Simplifies wording
-* Merges overlapping ideas
-* Improves readability
-* Preserves meaning
+#### LLM-Based Rewriting
+
+Uses an Ollama language model to rewrite the text.
+
+The module sends:
+
+* System prompt
+* Structured user prompt
+* Rewrite mode
+* Pre-merged text
+* Text analysis results
+
+Supported rewrite modes:
+
+* `concise`
+* `academic`
+* `fluent`
+* `standard`
+
+#### Output Cleaning
+
+Cleans the LLM output before returning the final text.
+
+Removes:
+
+* Introductory phrases
+* Explanations
+* Notes
+* Bullet-point summaries
+* Post-rewrite comments
+
+Examples removed:
+
+* Ecco il testo riscritto:
+* Versione migliorata:
+* Ho corretto...
+* Modifiche:
+* Spiegazione:
+
+### Inputs
+
+* Corrected Italian text
+* Repetition analysis report
+* Redundancy analysis report
+* Rewrite mode
+
+### Outputs
+
+* Rewritten text
+* Cleaner and more fluent text
+* Reduced repetitions
+* Removed pleonasms
+* Merged sentence candidates
+* Preserved important information
+
+### External Dependencies
+
+* Ollama
+* Regular expressions
+* spaCy
 
 ### Example
 

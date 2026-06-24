@@ -14,7 +14,7 @@ Yakup Gürer
 
 | Version | Date       | Authors                         | Notes                         |
 | ------- | ---------- | ------------------------------- | ----------------------------- |
-| 1.0     | 09/06/2026 | Emanuela Ibra, Yakup Gürer      | First version of the document |
+| 1.0     | 25/06/2026 | Emanuela Ibra, Yakup Gürer      | First version of the document |
 
 ---
 

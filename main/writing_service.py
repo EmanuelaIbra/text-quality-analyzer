@@ -12,18 +12,29 @@ from pages.text_redundancy_checker import (
 from pages.text_rewriter import TextRewriter
 
 # ---------------------------------------------------------------------------
-# Thresholds — single source of truth shared by analyze_only and the rewriter
+# Threshold Configuration
 # ---------------------------------------------------------------------------
+# These values are shared between the analysis stage and the rewriting stage
+# to ensure consistent classification of redundancy and similarity.
 
-USER_CHOICE_THRESHOLD = 0.85   # >= this  →  user must pick one sentence
-MERGE_THRESHOLD       = 0.82   # >= this  →  LLM may merge (raised to match transformer)
-FAST_WORD_THRESHOLD   = 0.92
-SLOW_WORD_THRESHOLD   = 0.88
-FAST_SENT_THRESHOLD   = 0.82   # same as transformer default
-SLOW_SENT_THRESHOLD   = 0.82   # transformer is already at its best; no value in lowering
-
-
+USER_CHOICE_THRESHOLD = 0.85   # Sentences above this similarity require user selection
+MERGE_THRESHOLD       = 0.65   # Sentences above this similarity may be merged
+FAST_WORD_THRESHOLD   = 0.92   # Word similarity threshold for fast mode
+SLOW_WORD_THRESHOLD   = 0.88   # Word similarity threshold for thorough mode
+FAST_SENT_THRESHOLD   = 0.82   # Sentence similarity threshold for fast mode
+SLOW_SENT_THRESHOLD   = 0.82   # Same threshold used in slow mode
 class WritingService:
+    """
+       Main orchestration service responsible for:
+
+       1. Grammar correction
+       2. Grammar evaluation
+       3. Repetition analysis
+       4. Pleonasm detection/removal
+       5. Redundancy detection
+       6. Text rewriting
+       """
+
     def __init__(self):
         self.nlp_model = spacy.load("it_core_news_lg")
 
@@ -75,6 +86,17 @@ class WritingService:
     # -----------------------------------------------------------------------
 
     def analyze_only(self, text: str, fast: bool = True) -> dict:
+        """
+        Perform analysis without rewriting.
+
+        Steps:
+        1. Grammar correction
+        2. Grammar evaluation
+        3. Repetition analysis
+        4. Pleonasm detection
+        5. Redundancy detection
+        6. Classification of redundant sentence pairs
+        """
         word_threshold = FAST_WORD_THRESHOLD if fast else SLOW_WORD_THRESHOLD
         sent_threshold = FAST_SENT_THRESHOLD if fast else SLOW_SENT_THRESHOLD
 

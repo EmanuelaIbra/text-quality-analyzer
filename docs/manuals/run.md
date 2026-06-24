@@ -3,6 +3,11 @@
 ## Start API
 
 ```bash
-uvicorn api:app --reload
+uvicorn main:app
 ```
 
+# Terminal 
+
+```bash
+ cd C:\ngrok .\ngrok http 8000
+ ```
