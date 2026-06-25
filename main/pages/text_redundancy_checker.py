@@ -1,56 +1,57 @@
 import json
-import os
 import re
-import spacy
-import numpy as np
 from functools import lru_cache
-from nltk.corpus import wordnet as wn
-from sentence_transformers import SentenceTransformer
+from pathlib import Path
 
-import torch
+import numpy as np
+
 
 # ---------------------------------------------------------------------------
-# Constants
+# Shared configuration
 # ---------------------------------------------------------------------------
 
-# POS tags considered meaningful for repetition/similarity checks.
 SEMANTIC_POS = {"NOUN", "VERB", "ADJ", "ADV", "PROPN"}
 
-# Thresholds for redundancy classification (transformer cosine scores)
+# Sentence-transformer cosine scores are conservative. The merge threshold is
+# intentionally lower than the manual-review threshold so related Italian
+# sentences are shown to the user instead of silently ignored.
 REDUNDANCY_THRESHOLDS = {
-    "duplicate":       0.95,
-    "manual_review":   0.85,
+    "duplicate": 0.95,
+    "manual_review": 0.85,
     "merge_candidate": 0.70,
 }
 
+SENTENCE_MODEL_NAME = "paraphrase-multilingual-mpnet-base-v2"
+DATA_DIR = Path(__file__).resolve().parents[1] / "data"
+DEFAULT_PLEONASM_PATH = DATA_DIR / "italian_pleonasms.json"
+
+
 # ---------------------------------------------------------------------------
-# Sentence-transformer model (loaded once, shared everywhere)
+# Sentence-transformer model
 # ---------------------------------------------------------------------------
 
-# Best free multilingual model for Italian paraphrase detection.
-# normalize_embeddings=True means cosine similarity == dot product (faster).
+@lru_cache(maxsize=1)
+def get_sentence_model():
+    """Load the multilingual sentence model once and reuse it for all calls."""
+    from sentence_transformers import SentenceTransformer
+
+    return SentenceTransformer(SENTENCE_MODEL_NAME, device="cpu")
+
+
 def encode_sentences(sentences: list[str]) -> np.ndarray:
-    """Batch-encode sentences, release model from memory after use."""
-    # Load the multilingual paraphrase model on CPU for compatibility.
-    model = SentenceTransformer(
-        "paraphrase-multilingual-mpnet-base-v2",
-        device='cpu'
-    )
-    # Encode all sentences in batches and normalize vectors for cosine similarity.
-    result = model.encode(
+    """Batch-encode sentences and return L2-normalised vectors."""
+    return get_sentence_model().encode(
         sentences,
         normalize_embeddings=True,
         show_progress_bar=False,
         batch_size=64,
     )
-    # Release model from memory
-    del model
-    torch.cuda.empty_cache()
-    return result
+
 
 # ---------------------------------------------------------------------------
 # Text normalisation
 # ---------------------------------------------------------------------------
+
 
 # Normalizes whitespace and punctuation spacing before linguistic analysis.
 def normalize_spacing(text: str) -> str:
@@ -76,18 +77,19 @@ def split_sentences(text: str) -> list[str]:
     text = normalize_spacing(text)
     return [s.strip() for s in re.split(r"(?<=[.!?])\s+", text) if s.strip()]
 
+
 # ---------------------------------------------------------------------------
-# Pleonasm loading & detection
+# Pleonasm loading and detection
 # ---------------------------------------------------------------------------
 
-# Loads pleonasm definitions from the configured JSON dataset.
-def load_pleonasm_entries(json_path: str = "data/italian_pleonasms.json") -> list[dict]:
-    if not os.path.exists(json_path):
-        print(f"Warning: pleonasm file not found: {json_path}")
+def load_pleonasm_entries(json_path: str | Path | None = None) -> list[dict]:
+    """Load Italian pleonasm examples from the project data file."""
+    path = Path(json_path) if json_path else DEFAULT_PLEONASM_PATH
+    if not path.exists():
+        print(f"Warning: pleonasm file not found: {path}")
         return []
 
-     # Read JSON using UTF-8 because the data contains Italian accented text.
-    with open(json_path, encoding="utf-8") as f:
+    with path.open(encoding="utf-8") as f:
         data = json.load(f)
 
     entries = []
@@ -96,92 +98,96 @@ def load_pleonasm_entries(json_path: str = "data/italian_pleonasms.json") -> lis
             phrase = item.get("pleonasmo", "").strip()
             if not phrase:
                 continue
-            entries.append({
-                "phrase":          phrase,
-                "replacement":     item.get("forma_corretta", "").strip(),
-                "category":        category_name,
-                "explanation":     item.get("spiegazione", ""),
-                "correct_variant": item.get("variante_corretta", ""),
-            })
-
+            entries.append(
+                {
+                    "phrase": phrase,
+                    "replacement": item.get("forma_corretta", "").strip(),
+                    "category": category_name,
+                    "explanation": item.get("spiegazione", ""),
+                    "correct_variant": item.get("variante_corretta", ""),
+                }
+            )
     return entries
 
 
 # Load pleonasm entries once at module import time.
 PLEONASM_ENTRIES = load_pleonasm_entries()
 # Cache lemma-based patterns per spaCy model name to avoid rebuilding them repeatedly.
-_PATTERN_CACHE: dict = {}
-
+_PATTERN_CACHE: dict[tuple[str, str], list[dict]] = {}
 
 # Converts pleonasm phrases into lemma sequences for inflection-tolerant matching.
 def _build_lemma_patterns(entries: list[dict], nlp) -> list[dict]:
+    """Convert pleonasm phrases into lemma patterns for flexible matching."""
     patterns = []
     for entry in entries:
-         # Lemmatize the phrase and ignore punctuation/space tokens.
         lemmas = [
-            t.lemma_.lower()
-            for t in nlp(entry["phrase"])
-            if not t.is_punct and not t.is_space and t.text.strip()
+            token.lemma_.lower()
+            for token in nlp(entry["phrase"])
+            if not token.is_punct and not token.is_space and token.text.strip()
         ]
         if lemmas:
             patterns.append({**entry, "phrase": entry["phrase"].lower(), "lemmas": lemmas})
     return patterns
 
 
+
 # Retrieves cached lemma patterns for the current spaCy pipeline.
 def get_lemma_patterns(nlp) -> list[dict]:
-    key = nlp.meta.get("name", "default")
+    """Return cached pleonasm lemma patterns for the active spaCy pipeline."""
+    key = (
+        nlp.meta.get("name", "default"),
+        nlp.meta.get("version", "unknown"),
+    )
     if key not in _PATTERN_CACHE:
         _PATTERN_CACHE[key] = _build_lemma_patterns(PLEONASM_ENTRIES, nlp)
     return _PATTERN_CACHE[key]
 
-# Optional helper to prebuild pleonasm patterns before the first analysis call.
+
 def warmup_pleonasm_cache(nlp) -> None:
+    """Prebuild pleonasm patterns during application startup."""
     get_lemma_patterns(nlp)
 
-# Finds pleonastic expressions by comparing token lemmas with stored patterns.
+
 def find_pleonasms(text: str, nlp) -> list[dict]:
-    text         = normalize_spacing(text)
-    doc          = nlp(text)
-    # Keep only meaningful tokens so pattern matching is not affected by punctuation
-    tokens       = [t for t in doc if not t.is_punct and not t.is_space and t.text.strip()]
+    """Find pleonastic expressions by comparing token lemmas."""
+    doc = nlp(normalize_spacing(text))
+    tokens = [t for t in doc if not t.is_punct and not t.is_space and t.text.strip()]
     token_lemmas = [t.lemma_.lower() for t in tokens]
-  # seen prevents reporting the same match more than once.
     findings, seen = [], set()
 
     for pattern in get_lemma_patterns(nlp):
-        size   = len(pattern["lemmas"])
+        size = len(pattern["lemmas"])
         target = pattern["lemmas"]
 
-        for i in range(len(token_lemmas) - size + 1):
-             # Skip this position unless the lemma window matches the pattern exactly.
-            if token_lemmas[i:i + size] != target:
+        for index in range(len(token_lemmas) - size + 1):
+            if token_lemmas[index:index + size] != target:
                 continue
 
-            matched_text = " ".join(t.text for t in tokens[i:i + size])
-            key          = (matched_text.lower(), pattern["phrase"])
-
+            matched_text = " ".join(t.text for t in tokens[index:index + size])
+            key = (matched_text.lower(), pattern["phrase"])
             if key in seen:
                 continue
             seen.add(key)
 
-            findings.append({
-                "phrase":          matched_text,
-                "base_phrase":     pattern["phrase"],
-                "replacement":     pattern["replacement"],
-                "category":        pattern["category"],
-                "explanation":     pattern["explanation"],
-                "correct_variant": pattern["correct_variant"],
-            })
+            findings.append(
+                {
+                    "phrase": matched_text,
+                    "base_phrase": pattern["phrase"],
+                    "replacement": pattern["replacement"],
+                    "category": pattern["category"],
+                    "explanation": pattern["explanation"],
+                    "correct_variant": pattern["correct_variant"],
+                }
+            )
 
     return findings
 
-# Replaces detected pleonasms with their suggested corrected form.
+
 def apply_pleonasm_replacements(text: str, pleonasms: list[dict]) -> str:
+    """Replace detected pleonasms with their suggested corrected form."""
     cleaned = normalize_spacing(text)
     for item in pleonasms:
-        phrase      = item["phrase"]
-        # Use the first replacement option when alternatives are separated by /.
+        phrase = item.get("phrase", "")
         replacement = (item.get("replacement", "") or "").split("/")[0].strip()
         if not phrase or not replacement:
             continue
@@ -193,201 +199,274 @@ def apply_pleonasm_replacements(text: str, pleonasms: list[dict]) -> str:
         )
     return normalize_spacing(cleaned)
 
-# ---------------------------------------------------------------------------
-# Repeated-word detection
-# ---------------------------------------------------------------------------
-
-# Detects repeated semantic lemmas inside each individual sentence.
-def find_repeated_words(text: str, nlp) -> list[dict]:
-    results = []
-    for sentence in split_sentences(text):
-        doc    = nlp(sentence)
-         # Keep only content-bearing, non-stopword tokens.
-        words  = [
-            t.lemma_.lower()
-            for t in doc
-            if t.pos_ in SEMANTIC_POS and not t.is_stop and not t.is_punct
-        ]
-        # Count lemma occurrences in the current sentence.
-        counts     = {}
-        for w in words:
-            counts[w] = counts.get(w, 0) + 1
-        duplicates = [w for w, c in counts.items() if c > 1]
-        if duplicates:
-            results.append({"sentence": sentence, "words": duplicates})
-    return results
 
 # ---------------------------------------------------------------------------
-# Similar-word detection  (spaCy word vectors — appropriate at word level)
+# Repeated and similar words
 # ---------------------------------------------------------------------------
 
-# Extracts content tokens suitable for word-level vector similarity.
 def _content_tokens(doc, min_len: int = 2):
+    """Extract content-bearing tokens suitable for repetition checks."""
     return [
-        t for t in doc
-        if t.pos_ in SEMANTIC_POS
-        and not t.is_stop
-        and not t.is_punct
-        and len(t.text.strip()) > min_len
+        token
+        for token in doc
+        if token.pos_ in SEMANTIC_POS
+        and not token.is_stop
+        and not token.is_punct
+        and len(token.text.strip()) > min_len
     ]
 
-# Finds semantically similar word pairs using spaCy lemma vectors.
+
+def find_repeated_words(text: str, nlp, doc=None) -> list[dict]:
+    """Detect repeated semantic lemmas inside each sentence."""
+    doc = doc or nlp(normalize_spacing(text))
+    spans = list(doc.sents) if doc.has_annotation("SENT_START") else []
+    sentence_docs = spans or [nlp(sentence) for sentence in split_sentences(text)]
+
+    results = []
+    for sentence_doc in sentence_docs:
+        counts: dict[str, int] = {}
+        for token in _content_tokens(sentence_doc):
+            lemma = token.lemma_.lower()
+            counts[lemma] = counts.get(lemma, 0) + 1
+
+        duplicates = [lemma for lemma, count in counts.items() if count > 1]
+        if duplicates:
+            results.append({"sentence": sentence_doc.text.strip(), "words": duplicates})
+    return results
+
+
 def find_similar_words(
     doc,
-    threshold:  float = 0.75,
-    max_tokens: int   = 80,
+    threshold: float = 0.75,
+    max_tokens: int = 80,
 ) -> list[tuple]:
-     # Limit token count to keep the pairwise similarity matrix small.
-    tokens         = _content_tokens(doc)[:max_tokens]
-    vectors, valid = [], []
+    """Find semantically similar word pairs using spaCy lemma vectors."""
+    tokens = _content_tokens(doc)[:max_tokens]
+    vectors, valid_tokens = [], []
 
-    for t in tokens:
-        # Use the lemma vector so inflected forms map to a common representation.
-        v = doc.vocab[t.lemma_].vector
-        if v.any():
-            vectors.append(v)
-            valid.append(t)
-    # At least two valid vectors are required for pairwise similarity.
+    for token in tokens:
+        vector = doc.vocab[token.lemma_].vector
+        if vector.any():
+            vectors.append(vector)
+            valid_tokens.append(token)
+
     if len(vectors) < 2:
         return []
 
-    # Build and L2-normalize the vector matrix before cosine similarity.
-    mat   = np.array(vectors, dtype=np.float32)
-    norms = np.linalg.norm(mat, axis=1, keepdims=True)
-    mat  /= np.where(norms == 0, 1e-9, norms)
-    sim   = mat @ mat.T
+    matrix = np.array(vectors, dtype=np.float32)
+    norms = np.linalg.norm(matrix, axis=1, keepdims=True)
+    matrix /= np.where(norms == 0, 1e-9, norms)
+    similarity = matrix @ matrix.T
 
     seen, pairs = set(), []
-    rows, cols  = np.where((sim >= threshold) & (sim <= 1.0))
+    rows, cols = np.where((similarity >= threshold) & (similarity < 1.0))
 
     for i, j in zip(rows, cols):
         if i >= j:
             continue
-        t1, t2 = valid[i], valid[j]
-        if t1.lemma_.lower() == t2.lemma_.lower():
+        first, second = valid_tokens[i], valid_tokens[j]
+        if first.lemma_.lower() == second.lemma_.lower():
             continue
-        key = frozenset([t1.text.lower(), t2.text.lower()])
+        key = frozenset([first.text.lower(), second.text.lower()])
         if key in seen:
             continue
         seen.add(key)
-        pairs.append((t1.text, t2.text, round(float(sim[i, j]), 2)))
+        pairs.append((first.text, second.text, round(float(similarity[i, j]), 2)))
 
-    return sorted(pairs, key=lambda x: -x[2])
+    return sorted(pairs, key=lambda item: -item[2])
+
+
 # ---------------------------------------------------------------------------
-# Redundant-sentence detection  (sentence-transformer cosine similarity)
+# Redundant sentence detection
 # ---------------------------------------------------------------------------
 
-# Maps a sentence similarity score to a redundancy label.
+def _sentence_lemmas(sentence: str, nlp=None) -> set[str]:
+    """Return content lemmas for lexical backup scoring."""
+    if nlp is not None:
+        return {
+            token.lemma_.lower()
+            for token in nlp(sentence)
+            if token.pos_ in SEMANTIC_POS and not token.is_stop and not token.is_punct
+        }
+    return {
+        token
+        for token in re.findall(r"[a-zà-ÿ]+", sentence.lower())
+        if len(token) > 3
+    }
+
+
+def _lexical_redundancy_score(first: set[str], second: set[str]) -> float:
+    """
+    Backup score for near-duplicate Italian sentences.
+
+    Transformer similarity is the main signal. This lexical score catches
+    short, highly overlapping sentences that multilingual embeddings sometimes
+    score too conservatively.
+    """
+    if len(first) < 3 or len(second) < 3:
+        return 0.0
+
+    overlap = len(first & second)
+    if overlap == 0:
+        return 0.0
+
+    containment = overlap / min(len(first), len(second))
+    jaccard = overlap / len(first | second)
+
+    if containment >= 0.80 and jaccard >= 0.50:
+        return min(0.87, 0.74 + (0.16 * jaccard))
+    if containment >= 0.65 and jaccard >= 0.45:
+        return min(0.78, 0.68 + (0.14 * jaccard))
+    return jaccard
+
+
 def classify_redundancy(score: float) -> str:
+    """Map a sentence similarity score to a redundancy label."""
     for label, threshold in REDUNDANCY_THRESHOLDS.items():
         if score >= threshold:
             return label
     return "related"
 
-# Finds sentence pairs whose transformer embeddings are above the redundancy threshold.
+
 def find_redundant_sentences(
     sentences: list[str],
-    threshold: float = 0.82,
+    threshold: float = 0.80,
+    nlp=None,
 ) -> list[tuple]:
     """
-    Compares every sentence pair using a multilingual sentence-transformer.
+    Find redundant or mergeable sentence pairs.
 
-    - No window limit: the full N×N cosine matrix is computed in one batched
-      operation, so distant-but-redundant sentences are never missed.
-    - No blended weights: transformer cosine alone is accurate enough that
-      mixing in weaker signals (Jaccard, WordNet) only adds noise.
-    - Threshold raised to 0.82: transformer scores are more compressed than
-      raw word-vector averages, so 0.75 would catch too much noise.
+    The main signal is multilingual transformer cosine similarity. Exact
+    duplicates are detected before model inference, and a conservative lexical
+    backup helps with short Italian sentences that share most content words.
     """
-    # No comparison is possible with fewer than two sentences.
     if len(sentences) < 2:
         return []
 
-    # Encode all sentences at once — batched GPU/CPU inference
-    embeddings = encode_sentences(sentences)          # (N, 768), L2-normalised
-    sim_matrix = embeddings @ embeddings.T            # cosine sim == dot product
-
-    # Store unique redundant pairs and avoid duplicate normalized pairs.
+    normalised = [normalize_for_dedup(sentence) for sentence in sentences]
+    lemma_sets = [_sentence_lemmas(sentence, nlp) for sentence in sentences]
     redundant, seen = [], set()
+    non_exact_pairs = []
 
-    # Upper triangle only (i < j), at or above threshold
-    rows, cols = np.where(
-        np.triu(sim_matrix >= threshold, k=1)
-    )
+    # Exact duplicates are cheap and deterministic; catch them before loading
+    # the transformer model.
+    for i in range(len(sentences)):
+        for j in range(i + 1, len(sentences)):
+            key = frozenset([normalised[i], normalised[j]])
+            if key in seen:
+                continue
+            seen.add(key)
 
-    for i, j in zip(rows, cols):
-        norm_a = normalize_for_dedup(sentences[i])
-        norm_b = normalize_for_dedup(sentences[j])
-        key    = frozenset([norm_a, norm_b])
+            if normalised[i] == normalised[j]:
+                redundant.append(
+                    (
+                        sentences[i],
+                        sentences[j],
+                        1.0,
+                        classify_redundancy(1.0),
+                    )
+                )
+            else:
+                non_exact_pairs.append((i, j))
 
-        if key in seen:
+    if not non_exact_pairs:
+        return sorted(redundant, key=lambda item: -item[2])
+
+    transformer_scores = None
+
+    try:
+        embeddings = encode_sentences(sentences)
+        transformer_scores = embeddings @ embeddings.T
+    except Exception as exc:
+        print(f"Warning: sentence transformer unavailable, using lexical fallback: {exc}")
+
+    for i, j in non_exact_pairs:
+        transformer_score = (
+            float(transformer_scores[i, j])
+            if transformer_scores is not None
+            else 0.0
+        )
+        lexical_score = _lexical_redundancy_score(lemma_sets[i], lemma_sets[j])
+        score = max(transformer_score, lexical_score)
+
+        if score < threshold:
             continue
-        seen.add(key)
 
-        # Exact duplicates always score 1.0 regardless of transformer output
-        score    = 1.0 if norm_a == norm_b else float(sim_matrix[i, j])
-        category = classify_redundancy(score)
+        redundant.append(
+            (
+                sentences[i],
+                sentences[j],
+                round(score, 2),
+                classify_redundancy(score),
+            )
+        )
 
-        redundant.append((
-            sentences[i],
-            sentences[j],
-            round(score, 2),
-            category,
-        ))
+    return sorted(redundant, key=lambda item: -item[2])
 
-    return sorted(redundant, key=lambda x: -x[2])
 
 # ---------------------------------------------------------------------------
 # Main analysis entry point
 # ---------------------------------------------------------------------------
 
-# Main public function that runs all text-quality checks and returns one report dictionary.
 def analyze_text(
-    text:               str,
-    word_sim_threshold: float = 0.75,
-    sent_sim_threshold: float = 0.82,
-    max_similar_tokens: int   = 80,
-    nlp                       = None,
+    text: str,
+    word_sim_threshold: float = 0.82,
+    sent_sim_threshold: float = 0.72,
+    max_similar_tokens: int = 80,
+    nlp=None,
 ) -> dict:
-        # Load the large Italian spaCy model only when the caller did not pass one in.
+    """Run all text-quality checks and return one report dictionary."""
+    if not text or not text.strip():
+        return {
+            "pleonasms": [],
+            "repeated_words": [],
+            "similar_words": [],
+            "redundant_sentences": [],
+        }
+
     if nlp is None:
+        import spacy
+
         nlp = spacy.load("it_core_news_lg")
-# Reuse the same normalized text, spaCy document, and sentence list across checks.
-    text      = normalize_spacing(text)
-    doc       = nlp(text)
-    sentences = split_sentences(text)
+
+    text = normalize_spacing(text)
+    doc = nlp(text)
+    sentences = [span.text.strip() for span in doc.sents] or split_sentences(text)
 
     return {
-        "pleonasms":           find_pleonasms(text, nlp),
-        "repeated_words":      find_repeated_words(text, nlp),
-        "similar_words":       find_similar_words(doc, word_sim_threshold, max_similar_tokens),
-        "redundant_sentences": find_redundant_sentences(sentences, sent_sim_threshold),
+        "pleonasms": find_pleonasms(text, nlp),
+        "repeated_words": find_repeated_words(text, nlp, doc=doc),
+        "similar_words": find_similar_words(doc, word_sim_threshold, max_similar_tokens),
+        "redundant_sentences": find_redundant_sentences(
+            sentences,
+            threshold=sent_sim_threshold,
+            nlp=nlp,
+        ),
     }
 
+
 # ---------------------------------------------------------------------------
-# CLI report
+# CLI report helper
 # ---------------------------------------------------------------------------
 
 _SEP = "-" * 60
 
 
-
-# Prints a report section heading.
 def _section(title: str) -> None:
     print(f"\n{_SEP}\n{title}\n{_SEP}")
 
 
-# Pretty-prints the analysis result returned by analyze_text().
+def print_report(report: dict) -> None:
+    """Pretty-print an analyze_text() report for manual debugging."""
     _section("PLEONASMI")
     if report["pleonasms"]:
         for item in report["pleonasms"]:
-            print(f"  ⚠  '{item['phrase']}'")
-            print(f"     Forma base:  {item['base_phrase']}")
-            print(f"     Correzione:  {item['replacement']}")
-            print(f"     Categoria:   {item['category']}")
+            print(f"  - '{item['phrase']}'")
+            print(f"    Forma base:  {item['base_phrase']}")
+            print(f"    Correzione:  {item['replacement']}")
+            print(f"    Categoria:   {item['category']}")
             if item["explanation"]:
-                print(f"     Spiegazione: {item['explanation']}")
-            print()
+                print(f"    Spiegazione: {item['explanation']}")
     else:
         print("  Nessun pleonasmo trovato.")
 
@@ -395,24 +474,23 @@ def _section(title: str) -> None:
     if report["repeated_words"]:
         for item in report["repeated_words"]:
             print(f"  Parole: {item['words']}")
-            print(f"  Frase:  \"{item['sentence']}\"\n")
+            print(f"  Frase:  \"{item['sentence']}\"")
     else:
         print("  Nessuna ripetizione trovata.")
 
     _section("PAROLE SIMILI / QUASI SINONIMI")
     if report["similar_words"]:
-        for w1, w2, score in report["similar_words"]:
-            bar = "█" * int(score * 20)
-            print(f"  '{w1}' ↔ '{w2}'  {score:.2f}  {bar}")
+        for first, second, score in report["similar_words"]:
+            print(f"  '{first}' <-> '{second}'  {score:.2f}")
     else:
         print("  Nessuna coppia simile trovata.")
 
     _section("FRASI RIDONDANTI")
     if report["redundant_sentences"]:
-        for sent_a, sent_b, score, category in report["redundant_sentences"]:
-            print(f"  Similarità: {score:.2f}  [{category}]")
-            print(f"  A: {sent_a}")
-            print(f"  B: {sent_b}\n")
+        for first, second, score, category in report["redundant_sentences"]:
+            print(f"  Similarita: {score:.2f}  [{category}]")
+            print(f"  A: {first}")
+            print(f"  B: {second}")
     else:
         print("  Nessuna frase ridondante trovata.")
 

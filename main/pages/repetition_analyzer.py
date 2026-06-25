@@ -3,11 +3,29 @@ import spacy
 import nltk
 from nltk.corpus import wordnet as wn
 from collections import Counter, defaultdict
+from functools import lru_cache
 
-nltk.download("wordnet", quiet=True)
-nltk.download("omw-1.4", quiet=True)
+_WORDNET_READY = False
 
+
+def _ensure_wordnet() -> None:
+    """Download WordNet data only when synonym checks actually need it."""
+    global _WORDNET_READY
+    if _WORDNET_READY:
+        return
+
+    for package in ("wordnet", "omw-1.4"):
+        try:
+            nltk.data.find(f"corpora/{package}")
+        except LookupError:
+            nltk.download(package, quiet=True)
+    _WORDNET_READY = True
+
+
+@lru_cache(maxsize=4096)
 def get_italian_synonyms(word):
+    """Return cached Italian WordNet synonyms for one lowercase word."""
+    _ensure_wordnet()
     synonyms = set()
     for syn in wn.synsets(word, lang='ita'):
         for lemma in syn.lemma_names('ita'):
@@ -150,56 +168,31 @@ class RepetitionAnalyzer:
                 groups[lemma].append(token.text)
         return {lemma: words for lemma, words in groups.items() if len(words) > 1}
 
-    def get_synonym_key(self, word):
-        """
-        Helper method that queries WordNet to extract a baseline canonical Italian 
-        synonym name to group conceptually related words together.
-        """
-        try:
-            lemmas = wn.lemmas(word, lang="ita")
-            if not lemmas:
-                return word
-            synset = lemmas[0].synset()
-            italian_lemmas = synset.lemmas(lang="ita")
-            if not italian_lemmas:
-                return word
-            return italian_lemmas[0].name().lower()
-        except Exception:
-            return word
-
     def synonym_repetition(self, text, window: int = None):
- #Detects synonym redundancy scoped to individual sentences (default) or within a sliding token window if `window` is given as an int.
+        """
+        Detect synonym-like repetition.
 
-        # Split into sentences on common Italian punctuation
+        By default, comparisons stay inside the same sentence to avoid noisy
+        matches. Passing a window also checks nearby words across sentence
+        boundaries.
+        """
+
         sentences = re.split(r'(?<=[.!?])\s+', text.strip())
-
         detected_pairs = []
         already_paired = set()
 
         for sentence in sentences:
-            cleaned = sentence.lower().replace('.', '').replace(',', '').replace('?', '').replace('!', '')
-            words = cleaned.split()
+            words = self.tokenize(sentence)
 
             for i in range(len(words)):
                 word_a = words[i]
-
                 if len(word_a) <= 3 or word_a in self._SYNONYM_SKIP:
                     continue
 
                 synonyms_of_a = get_italian_synonyms(word_a)
 
-                # Only compare against words later in the SAME sentence
-                search_range = range(i + 1, len(words))
-
-                # Optionally also check a cross-sentence window
-                if window is not None:
-                    # flatten all words and check by absolute index proximity
-                    # (handled below outside the sentence loop — skip here)
-                    pass
-
-                for j in search_range:
+                for j in range(i + 1, len(words)):
                     word_b = words[j]
-
                     if word_b in self._SYNONYM_SKIP or len(word_b) <= 3:
                         continue
 
@@ -212,9 +205,9 @@ class RepetitionAnalyzer:
                                 "sentence": sentence.strip(),
                             })
 
-    # Optional: sliding window across sentence boundaries
+        # Optional: sliding window across sentence boundaries.
         if window is not None:
-            all_words = text.lower().replace('.', '').replace(',', '').split()
+            all_words = self.tokenize(text)
             for i in range(len(all_words)):
                 word_a = all_words[i]
                 if len(word_a) <= 3 or word_a in self._SYNONYM_SKIP:
@@ -253,6 +246,6 @@ class RepetitionAnalyzer:
             "repetition_ratio": self.repetition_ratio(text),
             "highlighted_repetition": self.highlight_repetition(text),
             "lemma_repetition": lemma_repetition,
-            "synonym_repetition": self.synonym_repetition(text),
-            "has_synonym_repetition": len(self.synonym_repetition(text)) > 0,
+            "synonym_repetition": synonym_repetition,
+            "has_synonym_repetition": len(synonym_repetition) > 0,
         }

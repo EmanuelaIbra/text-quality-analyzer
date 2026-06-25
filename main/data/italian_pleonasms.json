@@ -418,6 +418,119 @@
           "uso_comune": "Ti faccio una promessa solenne.",
           "variante_corretta": "Ti giuro.",
           "nota": "Usato spesso per enfasi retorica."
+        },
+        {
+          "pleonasmo": "in anticipo prima",
+          "forma_corretta": "in anticipo / prima",
+          "spiegazione": "'In anticipo' implica già 'prima'.",
+          "uso_comune": "Arriva in anticipo prima.",
+          "variante_corretta": "Arriva in anticipo."
+        },
+        {
+          "pleonasmo": "successivo più avanti",
+          "forma_corretta": "successivo / più avanti",
+          "spiegazione": "Entrambe le espressioni indicano qualcosa che viene dopo.",
+          "uso_comune": "Ne parleremo successivamente più avanti.",
+          "variante_corretta": "Ne parleremo più avanti."
+        },
+        {
+          "pleonasmo": "partecipanti presenti",
+          "forma_corretta": "partecipanti / presenti",
+          "spiegazione": "Chi partecipa è già presente.",
+          "uso_comune": "I partecipanti presenti erano numerosi.",
+          "variante_corretta": "I partecipanti erano numerosi."
+        },
+        {
+          "pleonasmo": "nuovo aggiornamento",
+          "forma_corretta": "aggiornamento",
+          "spiegazione": "Un aggiornamento è già qualcosa di nuovo.",
+          "uso_comune": "È disponibile un nuovo aggiornamento.",
+          "variante_corretta": "È disponibile un aggiornamento."
+        },
+        {
+          "pleonasmo": "innovazione nuova",
+          "forma_corretta": "innovazione",
+          "spiegazione": "L'innovazione implica novità.",
+          "uso_comune": "Una nuova innovazione.",
+          "variante_corretta": "Un'innovazione."
+        },
+        {
+          "pleonasmo": "gratuitamente senza pagare",
+          "forma_corretta": "gratuitamente",
+          "spiegazione": "'Gratuitamente' significa già senza pagare.",
+          "uso_comune": "Puoi entrare gratuitamente senza pagare.",
+          "variante_corretta": "Puoi entrare gratuitamente."
+        },
+        {
+          "pleonasmo": "opinione personale",
+          "forma_corretta": "opinione",
+          "spiegazione": "Un'opinione è per definizione personale.",
+          "uso_comune": "È una mia opinione personale.",
+          "variante_corretta": "È una mia opinione."
+        },
+        {
+          "pleonasmo": "miglioramento positivo",
+          "forma_corretta": "miglioramento",
+          "spiegazione": "Un miglioramento è già positivo.",
+          "uso_comune": "C'è stato un miglioramento positivo.",
+          "variante_corretta": "C'è stato un miglioramento."
+        },
+        {
+          "pleonasmo": "immagini visive",
+          "forma_corretta": "immagini",
+          "spiegazione": "Le immagini sono già visive.",
+          "uso_comune": "Mostra immagini visive.",
+          "variante_corretta": "Mostra immagini."
+        },
+        {
+          "pleonasmo": "stranieri dall'esterno",
+          "forma_corretta": "stranieri",
+          "spiegazione": "Gli stranieri provengono già dall'esterno della comunità o del Paese.",
+          "uso_comune": "Sono arrivati stranieri dall'esterno.",
+          "variante_corretta": "Sono arrivati stranieri."
+        },
+        {
+          "pleonasmo": "successo positivo",
+          "forma_corretta": "successo",
+          "spiegazione": "Il successo implica già un esito positivo.",
+          "uso_comune": "È stato un successo positivo.",
+          "variante_corretta": "È stato un successo."
+        },
+        {
+          "pleonasmo": "finale conclusivo",
+          "forma_corretta": "finale / conclusivo",
+          "spiegazione": "Entrambi esprimono la conclusione.",
+          "uso_comune": "Il capitolo finale conclusivo.",
+          "variante_corretta": "Il capitolo conclusivo."
+        },
+        {
+          "pleonasmo": "collaborazione reciproca",
+          "forma_corretta": "collaborazione",
+          "spiegazione": "La collaborazione implica reciprocità.",
+          "uso_comune": "Serve una collaborazione reciproca.",
+          "variante_corretta": "Serve una collaborazione."
+        },
+        {
+          "pleonasmo": "consenso unanime",
+          "forma_corretta": "consenso",
+          "spiegazione": "Se tutti concordano, il consenso è già unanime nel contesto.",
+          "uso_comune": "Ha ottenuto un consenso unanime.",
+          "variante_corretta": "Ha ottenuto consenso.",
+          "nota": "Può essere accettabile in contesti dove si distingue da consenso parziale."
+        },
+        {
+          "pleonasmo": "esperienza personale",
+          "forma_corretta": "esperienza",
+          "spiegazione": "Un'esperienza è normalmente personale.",
+          "uso_comune": "Racconto la mia esperienza personale.",
+          "variante_corretta": "Racconto la mia esperienza."
+        },
+        {
+          "pleonasmo": "previsione futura",
+          "forma_corretta": "previsione",
+          "spiegazione": "Una previsione riguarda il futuro.",
+          "uso_comune": "Una previsione futura.",
+          "variante_corretta": "Una previsione."
         }
       ]
     },

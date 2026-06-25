@@ -1,78 +1,146 @@
-# Samples:
+# Grammar Correction Examples
 
-# 1:
+## Grammar Correction - Example 1
 
-Text: La biblioteca universitaria è stata rinnovata.L'università ha investito nel miglioramento della biblioteca.Gli spazi della biblioteca sono stati modernizzati.La struttura bibliotecaria è stata aggiornata per offrire servizi migliori.
+Input Text:Ieri sono andato al biblioteca della università per studiare. Ho trovato molti libro interessanti sul turismo e sulla economia italiana. La bibliotecaria mi hanno aiutato a cercare alcuni articoli recenti. Dopo due ore, ho scritto una breve riassunto per il mio progetto. 
 
-Output: La biblioteca universitaria è stata rinnovata e modernizzata. L'università ha investito nel miglioramento degli spazi e dei servizi, aggiornando la struttura per offrire una migliore esperienza agli studenti
+Expected Output:Ieri sono andato alla biblioteca dell'università per studiare. Ho trovato molti libri interessanti sul turismo e sull'economia italiana. La bibliotecaria mi ha aiutato a cercare alcuni articoli recenti. Dopo due ore, ho scritto un breve riassunto per il mio progetto. Penso che questi materiali saranno molto utili per la presentazione finale.
 
-# 2:
-Text:La comunicazione tra docenti e studenti è migliorata.La comunicazione tra docenti e studenti è migliorata.,Lo scambio di informazioni tra professori e studenti è diventato più efficace.Le nuove tecnologie hanno facilitato la comunicazione accademica.Docenti e studenti riescono a comunicare in modo più rapido rispetto al passato.
+## Grammar Correction - Example 2
 
-Output: La comunicazione tra docenti e studenti si è migliorata grazie alle nuove tecnologie che hanno reso lo scambio di informazioni più efficace e veloce.
+Input Text:La settimana scorsa abbiamo visitato una azienda che producono software per le scuole. Il responsabile ci ha spiegati come funziona la piattaforma digitale. Alcuni studenti era interessati alle funzionalità più avanzate. Durante la visita, abbiamo fatto molte domanda sul sistema. Alla fine, il professore ci ha detto che l'esperienza mi è stata molto utile.
 
-# 3:
+Expected Output:La settimana scorsa abbiamo visitato un'azienda che produce software per le scuole. Il responsabile ci ha spiegato come funziona la piattaforma digitale. Alcuni studenti erano interessati alle funzionalità più avanzate. Durante la visita, abbiamo fatto molte domande sul sistema. Alla fine, il professore ci ha detto che l'esperienza è stata molto utile.
 
-Text:Le università svolgono un ruolo fondamentale nello sviluppo della conoscenza scientifica. Attraverso attività di ricerca avanzata, gli studenti e i ricercatori contribuiscono alla produzione di nuove conoscenze e innovazioni. Negli ultimi anni molte università hanno investito risorse considerevoli nella digitalizzazione dei processi amministrativi e didattici. Questo nuovo sistema innovativo ha permesso di migliorare l'accesso ai materiali di studio e di facilitare la collaborazione tra studenti e docenti. Tuttavia, rimangono ancora alcune sfide legate alla qualità dell'insegnamento online e alla partecipazione attiva degli studenti.
+## Grammar Correction - Example 3
 
-Output:Le università svolgono un ruolo fondamentale nello sviluppo della conoscenza scientifica. Attraverso la ricerca avanzata, gli studenti e i ricercatori contribuiscono a creare nuove conoscenze e innovazioni. Negli ultimi anni molte università hanno investito nella digitalizzazione dei processi amministrativi e didattici, migliorando l'accesso ai materiali di studio e la collaborazione tra studenti e docenti. Tuttavia, persistono alcune sfide legate alla qualità dell'insegnamento online e alla partecipazione degli studenti.
+Input Text:Nel mio quartiere ci sono molti negozio piccoli e alcuni supermercati grande. Le persone compra spesso frutta, pane e prodotti locali. Ogni sabato, il mercato aprono molto presto e attirano molti clienti. Io preferisco andare lì perché i prezzi è più convenienti. Inoltre, i venditori sono gentile e danno sempre buoni consigli.
 
-# 4:
+Expected Output:Nel mio quartiere ci sono molti negozi piccoli e alcuni supermercati grandi. Le persone comprano spesso frutta, pane e prodotti locali. Ogni sabato, il mercato apre molto presto e attira molti clienti. Io preferisco andare lì perché i prezzi sono più convenienti. Inoltre, i venditori sono gentili e danno sempre buoni consigli.
 
-Text: Il turismo rappresenta una delle principali fonti di reddito per molte regioni italiane. Ogni anno milioni di visitatori scelgono di visitare città storiche, località costiere e aree naturali protette. Negli ultimi anni il settore turistico ha subito cambiamenti importanti a causa delle nuove abitudini dei viaggiatori. Molti turisti preferiscono esperienze personalizzate e sostenibili rispetto alle tradizionali vacanze di massa. Per rispondere a queste nuove esigenze, gli operatori del settore hanno sviluppato servizi innovativi e strategie mirate a migliorare l'esperienza dei visitatori.
+## Grammar Correction - Example 4
 
-Output: Il turismo è una delle principali fonti di reddito per molte regioni italiane. Ogni anno milioni di persone scelgono di visitare città storiche, località costiere e aree naturali protette. Negli ultimi anni il settore ha subito cambiamenti a causa delle nuove abitudini dei viaggiatori. Molti preferiscono esperienze personalizzate e sostenibili rispetto alle tradizionali vacanze di massa. Gli operatori del settore hanno quindi sviluppato servizi innovativi per migliorare l'esperienza dei visitatori.
+Input Text:Ieri sono andato al supermercato e ho comprato delle mela. Dopo ho incontrato i miei amico. Abbiamo bevuto un caffè e parlato dei nostri progetto.La giornata era molto piacevole.Poi siamo tornato a casa.
 
-# 5:
+Expected Output:Ieri sono andato al supermercato e ho comprato delle mele. Dopo ho incontrato i miei amici. Abbiamo bevuto un caffè e parlato dei nostri progetto.La giornata era molto piacevole.Poi siamo tornati a casa.
 
-Text: Praticare attività fisica è importante per la salute. L'esercizio fisico contribuisce al benessere fisico. Le attività sportive migliorano la condizione fisica delle persone.Molte persone non svolgono sufficiente attività fisica. Numerosi individui conducono una vita sedentaria e poco attiva. La mancanza di movimento può causare diversi problemi di salute.Per migliorare la salute futura è consigliabile iniziare a svolgere attività sportive regolarmente.
+## Grammar Correction - Example 5
 
-Output: Eseguire attività fisica è fondamentale per la salute. Le attività sportive possono migliorare la condizione fisica e prevenire problemi di salute. Tuttavia, molte persone non fanno abbastanza esercizio fisico e conducono una vita sedentaria. È importante iniziare a praticare regolarmente attività sportive per mantenere la salute nel tempo.
+Input Text:Ieri sera, io e nostri amici siamo andato al mercato. Abbiamo comprato di il pane e della frutta. La problema era che il negozio chiudeva presto. Un ragazza alla cassa ci ha detto che i prodotti erano finite. Gli studenti del liceo, che studiava ogni giorno, pensava in qualcosa di importante. Le case grande del quartiere sembravano vuote. I problemi complesso della città non aveva soluzione. Siamo tornato a piedi, anche se il tempo era brutto. Nostri progetto per il weekend era semplice: rilassarsi. 
 
-# 6:
+Expected Output:Durante la riunione, il manager ha presentato i risultati del mese. Alcuni dati erano positivi, ma altre informazioni non erano chiare. I dipendenti hanno proposto diverse soluzioni per migliorare il servizio. Dopo la discussione, il gruppo ha deciso di preparare un nuovo piano. La prossima settimana, tutti riceveranno una copia del documento.
 
-Text: Ogni anno milioni di turisti visitano nuove destinazioni. I viaggiatori scelgono nuove mete per conoscere culture differenti. Molti turisti desiderano visitare luoghi nuovi e diversi.Il turismo contribuisce positivamente all'economia locale. L'economia delle regioni turistiche beneficia della presenza dei turisti. L'arrivo dei visitatori produce effetti economici favorevoli.In conclusione finale, il turismo rappresenta un settore importante e significativo.
+# Pleonasm Examples
 
-Output: Ogni anno milioni di turisti visitano destinazioni nuove per conoscere culture diverse. Il turismo contribuisce positivamente all'economia locale, creando effetti economici favorevoli. In conclusione, il turismo è un settore importante e significativo per le regioni che lo ospitano.
+## Pleonasm - Example 1
 
-# 7:
+Input Text:Il progetto è stato pianificato in anticipo prima dell'inizio del semestre. Il team ha collaborato insieme per definire gli obiettivi principali. Durante la prima riunione, abbiamo discusso il risultato finale  che volevamo ottenere. Alcune decisioni sono state rimandate a un momento successivo più avanti. Alla fine, il piano è sembrato chiaro a tutti i partecipanti presenti.
 
-Text: Il cambiamento climatico rappresenta una sfida importante. Le conseguenze del cambiamento climatico sono visibili in molte regioni del mondo. Questo fenomeno climatico sta modificando il clima globale.Molti governi stanno investendo nelle energie rinnovabili. Gli investimenti nelle fonti rinnovabili sono aumentati negli ultimi anni. Le fonti energetiche rinnovabili possono ridurre le emissioni.Per affrontare questo problema problematico è necessario agire rapidamente e velocemente.
+Expected Output:Il progetto è stato pianificato prima dell'inizio del semestre. Il team ha collaborato per definire gli obiettivi principali. Durante la prima riunione, abbiamo discusso il risultato che volevamo ottenere. Alcune decisioni sono state rimandate a un momento successivo. Alla fine, il piano è sembrato chiaro a tutti i partecipanti.
 
-Output:Il cambiamento climatico rappresenta una sfida importante per il pianeta. Le sue conseguenze sono visibili in molte regioni del mondo, dove sta modificando il clima globale. Per affrontare questo problema è necessario agire rapidamente e investire nelle energie rinnovabili, come ad esempio le fonti energetiche solari o eolico, che possono ridurre le emissioni di gas serra.
 
-# 8: 
+## Pleonasm - Example 2
 
-Text: Molti studenti universitari incontrano difficoltà durante il primo anno. Molti studenti trovano difficile organizzare il proprio tempo. Gli studenti spesso non riescono a gestire correttamente gli impegni accademici e gli impegni personali.L'università offre numerosi servizi di supporto agli studenti. I servizi universitari sono stati creati per aiutare gli studenti durante il percorso accademico. Grazie a questi servizi di supporto, gli studenti possono ricevere assistenza e supporto.Per migliorare i risultati finali, gli studenti dovrebbero pianificare in anticipo il proprio studio futuro. Una pianificazione futura adeguata può contribuire al successo accademico degli studenti.
+Input Text:L'azienda ha annunciato un nuovo aggiornamento innovativo per la sua applicazione mobile. Gli utenti potranno accedere gratuitamente senza pagare alle nuove funzionalità. Il comunicato ufficiale scritto spiega che il servizio sarà disponibile da lunedì. Molti clienti hanno espresso un'opinione personale positiva sul cambiamento. Secondo il direttore, questa scelta rappresenta un miglioramento positivo per il futuro.
 
-Output: Molti studenti universitari incontrano difficoltà durante il primo anno. Un problema comune è l'organizzazione del tempo. Gli studenti spesso non riescono a gestire correttamente impegni accademici e personali.
+Expected Output:L'azienda ha annunciato un aggiornamento innovativo per la sua applicazione mobile. Gli utenti potranno accedere gratuitamente alle nuove funzionalità. Il comunicato ufficiale spiega che il servizio sarà disponibile da lunedì. Molti clienti hanno espresso un'opinione positiva sul cambiamento. Secondo il direttore, questa scelta rappresenta un miglioramento per il futuro.
 
-L'università offre servizi di supporto per aiutare gli studenti nel loro percorso.Per ottenere buoni risultati, è importante pianificare in anticipo lo studio futuro. Una pianificazione adeguata può contribuire al successo accademico degli studenti.
+## Pleonasm - Example 3
 
-# 9:
+Input Text:Durante la conferenza, il relatore ha fatto una breve sintesi riassuntiva del tema principale. Ha poi spiegato i motivi per cui il problema continua ancora oggi a esistere. Alcuni partecipanti hanno fatto domande precise e dettagliate nei particolari. La discussione è proseguita fino alla conclusione finale dell'evento. Tutti hanno apprezzato il contributo utile e vantaggioso del relatore.
 
-Text : Il sistema sanitario nazionale ha affrontato numerose difficoltà negli ultimi anni. Gli ospedali hanno registrato un aumento significativo del numero di pazienti e una crescente domanda di servizi medici specializzati. Molti professionisti del settore hanno collaborato insieme per migliorare la qualità dell'assistenza sanitaria. È assolutamente essenziale investire nella formazione del personale medico e nell'aggiornamento delle infrastrutture esistenti. Inoltre, l'introduzione di nuove tecnologie digitali potrebbe contribuire a migliorare la gestione dei dati clinici e a ridurre i tempi di attesa per i pazienti.
+Expected Output:Durante la conferenza, il relatore ha fatto una breve sintesi del tema principale. Ha poi spiegato i motivi per cui il problema continua a esistere. Alcuni partecipanti hanno fatto domande precise e dettagliate. La discussione è proseguita fino alla conclusione dell'evento. Tutti hanno apprezzato il contributo utile del relatore.
 
-Output : Il sistema sanitario nazionale ha affrontato difficoltà negli ultimi anni, con un aumento del numero di pazienti e una crescente domanda di servizi medici specializzati. È necessario investire nella formazione del personale medico e nell'aggiornamento delle infrastrutture esistenti per migliorare la qualità dell'assistenza sanitaria. La collaborazione tra i professionisti del settore è fondamentale, mentre l'introduzione di nuove tecnologie digitali potrebbe ridurre i tempi di attesa dei pazienti e migliorare la gestione dei dati clinici.
+## Pleonasm - Example 4
 
-# 10 :
+Input Text:Il museo ha riaperto di nuovo dopo alcuni mesi di lavori. I visitatori possono vedere esposizioni nuove e recenti dedicate alla storia locale. La guida ha spiegato ogni dettaglio particolare delle opere principali. Nel catalogo sono presenti immagini visive e descrizioni complete. L'obiettivo principale è attirare un numero maggiore di turisti stranieri dall'estero.
 
-Text : Negli ultimi anni la nostra azienda ha attraversato numerosi cambiamenti importanti e trasformazioni significative. Negli ultimi anni l'azienda ha vissuto molti cambiamenti importanti che hanno influenzato il modo in cui lavoriamo ogni giorno. È molto importante sottolineare che questi cambiamenti sono stati estremamente importanti per il futuro dell'organizzazione e per il successo futuro dell'organizzazione.Durante questo periodo di tempo molti dipendenti hanno collaborato insieme per raggiungere obiettivi comuni e condivisi. I membri del team hanno lavorato insieme come squadra per completare i progetti nei tempi previsti. Molti membri del personale hanno partecipato attivamente alle attività del progetto e hanno partecipato alle riunioni che si sono svolte durante il progetto. Alcuni dipendenti hanno dichiarato che il progetto era molto utile mentre altri dipendenti hanno detto che il progetto era estremamente utile e particolarmente vantaggioso.Uno dei risultati finali più importanti è stato il miglioramento della comunicazione interna. Il risultato finale del progetto è stato positivo e favorevole per l'azienda. Grazie a questo miglioramento i dipendenti sono stati in grado di collaborare insieme in modo più efficace ed efficiente. Inoltre è stato introdotto un nuovo sistema innovativo che rappresenta una nuova innovazione per il settore. Questo nuovo sistema innovativo ha permesso di ridurre i tempi necessari per completare molte attività operative quotidiane.Per quanto riguarda il reparto vendite, le vendite sono diminuite significativamente durante il terzo trimestre dell'anno. Nel terzo trimestre le vendite hanno registrato un forte calo rispetto ai periodi precedenti. Questa diminuzione è stata causata principalmente da problemi relativi alla catena di approvvigionamento e da ritardi nelle consegne. A causa dei problemi nella catena di approvvigionamento il numero di prodotti disponibili è diminuito e questo ha avuto un impatto negativo sulle vendite. Le vendite sono diminuite perché c'erano meno prodotti disponibili e c'erano meno prodotti disponibili perché si sono verificati problemi nella catena di approvvigionamento.Per affrontare questa situazione problematica il management ha deciso di ridurre i costi operativi e di ottimizzare l'allocazione delle risorse disponibili. I costi operativi sono stati ridotti per diminuire le spese operative e diminuire i costi complessivi dell'organizzazione. Le misure di riduzione dei costi includevano la revisione dei processi interni, la revisione delle attività amministrative e la revisione dei contratti con i fornitori.Nel settore tecnologico l'intelligenza artificiale sta assumendo un ruolo sempre più importante. Molte aziende stanno investendo nell'intelligenza artificiale e molte organizzazioni stanno investendo in soluzioni basate sull'intelligenza artificiale. Alcune aziende credono che l'intelligenza artificiale rappresenti una nuova innovazione che cambierà il futuro mentre altre aziende ritengono che questa tecnologia presenti rischi significativi. Tra i principali vantaggi troviamo una maggiore produttività e una migliore efficienza. Tra i rischi principali troviamo problemi di sicurezza, problemi di privacy e problemi relativi alla gestione dei dati sensibili.Anche il settore sanitario ha vissuto cambiamenti significativi. Gli ospedali hanno registrato un aumento significativo del numero di pazienti e una crescente domanda di servizi medici specializzati. Molti professionisti sanitari hanno collaborato insieme per migliorare la qualità dell'assistenza sanitaria. È assolutamente essenziale e completamente necessario investire nella formazione del personale medico e nell'aggiornamento delle infrastrutture esistenti. Molti esperti ritengono che investire nella formazione sia una priorità assolutamente essenziale per il futuro del sistema sanitario.Per quanto riguarda il settore dell'istruzione, le università hanno investito risorse considerevoli nella digitalizzazione dei processi amministrativi e didattici. Questo nuovo sistema innovativo ha permesso di migliorare l'accesso ai materiali di studio e di facilitare la collaborazione tra studenti e docenti. Tuttavia alcuni studenti ritengono che l'insegnamento online non sia efficace quanto l'insegnamento tradizionale. Altri studenti ritengono che l'apprendimento online sia molto efficace e molto utile per il proprio percorso formativo.In futuro prevediamo di fare una pianificazione futura più accurata e dettagliata. Il nostro obiettivo principale è quello di continuare a migliorare continuamente i processi aziendali e aumentare ulteriormente la produttività. È assolutamente essenziale investire nella formazione del personale per garantire che tutti possano adattarsi ai cambiamenti futuri. Se dovessero verificarsi problemi imprevisti la direzione potrebbe ritornare nuovamente alla strategia precedente che era stata utilizzata in passato.In conclusione possiamo affermare che il progetto è stato un grande successo. Possiamo dire che l'iniziativa ha avuto risultati molto positivi e favorevoli. I dipendenti hanno espresso opinioni favorevoli e positive riguardo ai cambiamenti introdotti. Grazie alla collaborazione tra i diversi team e alla cooperazione tra i vari reparti l'azienda è riuscita a raggiungere risultati importanti e significativi che contribuiranno al successo futuro dell'organizzazione. In conclusione possiamo dire nuovamente che il progetto è stato un successo e che il risultato finale è stato positivo
+Expected Output:Il museo ha riaperto dopo alcuni mesi di lavori. I visitatori possono vedere esposizioni recenti dedicate alla storia locale. La guida ha spiegato ogni dettaglio delle opere principali. Nel catalogo sono presenti immagini e descrizioni complete. L'obiettivo principale è attirare un numero maggiore di turisti stranieri.
 
-Output : Negli ultimi anni la nostra azienda ha attraversato cambiamenti importanti e trasformazioni significative. Questi cambiamenti sono stati estremamente importanti per il futuro dell'organizzazione e del suo successo.
+## Pleonasm - Example 5
 
-Durante questo periodo, molti dipendenti hanno collaborato per raggiungere obiettivi comuni e condivisi. I membri del team hanno lavorato insieme come squadra per completare i progetti nei tempi previsti. Il risultato più importante è stato il miglioramento della comunicazione interna, che ha permesso ai dipendenti di collaborare in modo più efficace ed efficiente.
+Input Text:La squadra ha ottenuto un successo positivo dopo molte settimane di lavoro. Il risultato finale conclusivo è stato presentato davanti alla direzione. Ogni membro ha contribuito personalmente con idee proprie al progetto. In futuro, il gruppo continuerà ancora a migliorare il servizio. Questa esperienza ha creato una collaborazione reciproca tra tutti i colleghi.
 
-È stato introdotto un nuovo sistema innovativo che rappresenta una vera innovazione per il settore. Questo sistema ha permesso di ridurre i tempi necessari per completare molte attività operative quotidiane.
+Expected Output: La squadra ha ottenuto un successo dopo molte settimane di lavoro. Il risultato finale è stato presentato davanti alla direzione. Ogni membro ha contribuito con idee proprie al progetto. In futuro, il gruppo continuerà a migliorare il servizio. Questa esperienza ha creato una collaborazione tra tutti i colleghi.
 
-Tuttavia, nel terzo trimestre le vendite sono diminuite significativamente a causa dei problemi nella catena di approvvigionamento e dei ritardi nelle consegne. Per affrontare questa situazione problematica il management ha deciso di ridurre i costi operativi e di ottimizzare l'allocazione delle risorse disponibili.
 
-Nel settore tecnologico, l'intelligenza artificiale sta assumendo un ruolo sempre più importante. Molte aziende stanno investendo in soluzioni basate sull'intelligenza artificiale, che rappresentano una vera innovazione per il futuro.
+## Synonym Detection - Example 
+Input: Ieri ho comprato un computer davvero nuovo, moderno e recente. Il commesso del negozio è stato molto cortese, gentile e garbato con me. La confezione della scatola era pesante, massiccia e gravosa da trasportare a piedi. Una volta a casa, ho avviato il PC con un processo rapido, veloce e immediato. Lo schermo mostrava immagini con colori vivi, brillanti e lucenti. Ho subito iniziato a scrivere un testo lungo, esteso e prolisso per il lavoro. Questo lavoro si è rivelato un compito faticoso, pesante e stancante. La mia sedia dell'ufficio però è molto comoda, confortevole e accogliente. Finire il progetto mi ha reso davvero felice, contento e soddisfatto. Ora mi merito un riposo tranquillo, sereno e pacifico sul divano.
+Expected Output:Ieri ho comprato un computer davvero nuovo. Il commesso del negozio è stato molto gentile con me. La confezione della scatola era pesante da trasportare a piedi. Una volta a casa, ho avviato il PC con un processo immediato. Lo schermo mostrava immagini con colori lucenti. Ho subito iniziato a scrivere un testo lungo per il lavoro. Questo lavoro si è rivelato un compito stancante. La mia sedia dell'ufficio però è molto confortevole. Finire il progetto mi ha reso davvero felice. Ora mi merito un riposo sereno e pacifico sul divano.
+# Redundancy Detection Examples
 
-Anche il settore sanitario ha vissuto cambiamenti significativi. Gli ospedali hanno registrato un aumento del numero di pazienti e una crescente domanda di servizi medici specializzati. È assolutamente essenziale investire nella formazione del personale medico e nell'aggiornamento delle infrastrutture esistenti.
+## Redundancy Detection - Example 1
 
-Per quanto riguarda il settore dell'istruzione, le università hanno investito risorse considerevoli nella digitalizzazione dei processi amministrativi e didattici. Questo nuovo sistema innovativo ha permesso di migliorare l'accesso ai materiali di studio e di facilitare la collaborazione tra studenti e docenti.
+Input Text:Il manager ha approvato la richiesta di budget per il nuovo progetto. La richiesta di budget è stata approvata dal manager durante la riunione. Il team può quindi iniziare a pianificare le attività principali. I dipendenti dovranno preparare un calendario dettagliato entro venerdì. Questa approvazione permette al gruppo di procedere con maggiore sicurezza.
 
-In futuro prevediamo di fare una pianificazione futura più accurata e dettagliata. Il nostro obiettivo principale è quello di continuare a migliorare i processi aziendali e aumentare ulteriormente la produttività. È assolutamente essenziale investire nella formazione del personale per garantire che tutti possano adattarsi ai cambiamenti futuri.
+Expected Output:Il manager ha approvato la richiesta di budget per il nuovo progetto durante la riunione. Il team può quindi iniziare a pianificare le attività principali. I dipendenti dovranno preparare un calendario dettagliato entro venerdì. Questa approvazione permette al gruppo di procedere con maggiore sicurezza.
 
-In conclusione, il progetto è stato un grande successo. I dipendenti hanno espresso opinioni favorevoli e positive riguardo ai cambiamenti introdotti. Grazie alla collaborazione tra i diversi team e alla cooperazione tra i vari reparti l'azienda è riuscita a raggiungere risultati importanti e significativi che contribuiranno al successo futuro dell'organizzazione.
+
+## Redundancy Detection - Example 2
+
+Input Text:La biblioteca resterà chiusa lunedì per lavori di manutenzione. Lunedì la biblioteca non sarà aperta perché sono previsti lavori. Gli studenti potranno comunque accedere ai servizi digitali dal sito ufficiale. Il personale ha pubblicato un avviso sulla pagina principale. La riapertura è prevista per martedì mattina.
+
+Expected Output:La biblioteca resterà chiusa lunedì per lavori di manutenzione. Gli studenti potranno comunque accedere ai servizi digitali dal sito ufficiale. Il personale ha pubblicato un avviso sulla pagina principale. La riapertura è prevista per martedì mattina.
+
+
+## Redundancy Detection - Example 3
+
+Input Text:Il nuovo sistema permette agli utenti di prenotare appuntamenti online. Gli utenti possono usare il sistema per prenotare appuntamenti. Il servizio è disponibile tutti i giorni e non richiede una registrazione complessa. L'obiettivo è ridurre le attese negli uffici pubblici. I cittadini potranno ricevere una conferma automatica via email.
+
+Expected Output:Il nuovo sistema permette agli utenti di prenotare appuntamenti online. Il servizio è disponibile tutti i giorni e non richiede una registrazione complessa. L'obiettivo è ridurre le attese negli uffici pubblici. I cittadini potranno ricevere una conferma automatica via email.
+
+
+## Redundancy Detection - Example 4
+
+Input Text:Il professore ha spiegato le regole dell'esame all'inizio della lezione. All'inizio della lezione, le regole dell'esame sono state spiegate dal professore. Gli studenti hanno preso appunti per evitare errori durante la prova. Alcuni hanno chiesto chiarimenti sulle modalità di consegna. La prova finale si svolgerà la prossima settimana.
+
+Expected Output:Il professore ha spiegato le regole dell'esame all'inizio della lezione. Gli studenti hanno preso appunti per evitare errori durante la prova. Alcuni hanno chiesto chiarimenti sulle modalità di consegna. La prova finale si svolgerà la prossima settimana.
+
+
+## Redundancy Detection - Example 5
+
+Input Text:L'applicazione invia una notifica quando arriva un nuovo messaggio. Quando un nuovo messaggio viene ricevuto, l'app manda un avviso all'utente. Questa funzione è utile per chi lavora con molte conversazioni. Le notifiche possono essere disattivate dalle impostazioni. Gli sviluppatori stanno preparando anche una versione per tablet.
+
+Expected Output:L'applicazione invia una notifica quando arriva un nuovo messaggio. Questa funzione è utile per chi lavora con molte conversazioni. Le notifiche possono essere disattivate dalle impostazioni. Gli sviluppatori stanno preparando anche una versione per tablet.
+
+# Complex Examples
+
+## Complex Example 1
+
+Input Text:Ieri il team hanno presentato una nuova proposta innovativa per migliorare il servizio clienti. La proposta nuova è stata spiegata durante una riunione breve e sintetica. Il manager ha approvato la richiesta di budget, e la richiesta di budget è stata approvata dal manager nello stesso incontro. Alcuni dipendenti hanno detto che il sistema è utile, vantaggioso e pratico per tutti gli utenti. Alla fine, il gruppo hanno deciso di continuare ancora con la fase successiva del progetto.
+
+Expected Output:Ieri il team ha presentato una proposta innovativa per migliorare il servizio clienti. La proposta è stata spiegata durante una riunione breve. Il manager ha approvato la richiesta di budget durante lo stesso incontro. Alcuni dipendenti hanno detto che il sistema è utile e pratico per gli utenti. Alla fine, il gruppo ha deciso di continuare con la fase successiva del progetto.
+
+
+## Complex Example 2
+
+Input Text:La biblioteca del università sono molto importante per gli studenti stranieri. Ogni giorno molti studenti visitano la biblioteca e molti studenti usano le sale studio per preparare gli esami. Il personale collabora insieme per offrire un servizio utile, vantaggioso e funzionale. La biblioteca resterà chiusa lunedì, e lunedì la biblioteca non sarà aperta per lavori tecnici. Questa comunicazione ufficiale scritta è stata pubblicata sul sito principale.
+
+Expected Output:La biblioteca dell'università è molto importante per gli studenti stranieri. Ogni giorno molti studenti la visitano e usano le sale studio per preparare gli esami. Il personale collabora per offrire un servizio utile e funzionale. La biblioteca resterà chiusa lunedì per lavori tecnici. Questa comunicazione ufficiale è stata pubblicata sul sito principale.
+
+
+## Complex Example 3
+
+Input Text:Il turismo rappresentano una fonte importante di reddito per molte regione italiane. Negli ultimi anni il settore turistico ha subito cambiamenti nuovi e recenti a causa delle nuove abitudini dei viaggiatori. Molti turisti preferiscono esperienze personalizzate e sostenibili, e molti visitatori scelgono esperienze su misura e rispettose dell'ambiente. Gli operatori del settore hanno sviluppato servizi innovativi e moderni per migliorare l'esperienza dei visitatori. Per rispondere a queste nuove esigenze, il settore deve continuare ancora a investire nella qualità.
+
+Expected Output:Il turismo rappresenta una fonte importante di reddito per molte regioni italiane. Negli ultimi anni il settore turistico ha subito cambiamenti recenti a causa delle nuove abitudini dei viaggiatori. Molti turisti preferiscono esperienze personalizzate e sostenibili. Gli operatori del settore hanno sviluppato servizi innovativi per migliorare l'esperienza dei visitatori. Per rispondere a queste esigenze, il settore deve continuare a investire nella qualità.
+
+## Complex Example 4
+
+Input Text:L'azienda hanno creato una piattaforma digitale per gestire le prenotazioni online. Gli utenti possono prenotare appuntamenti online, e gli utenti possono fissare appuntamenti tramite internet usando la stessa piattaforma. Il servizio è rapido, veloce e immediato, ma alcuni clienti hanno trovato la registrazione complicata e difficile. Il direttore ha fatto una breve sintesi riassuntiva dei problemi principali durante la riunione. Dopo la discussione, i tecnici ha deciso di preparare un aggiornamento nuovo per la prossima settimana.
+
+Expected Output:L'azienda ha creato una piattaforma digitale per gestire le prenotazioni online. Gli utenti possono prenotare appuntamenti tramite la piattaforma. Il servizio è rapido, ma alcuni clienti hanno trovato la registrazione complicata. Il direttore ha fatto una breve sintesi dei problemi principali durante la riunione. Dopo la discussione, i tecnici hanno deciso di preparare un aggiornamento per la prossima settimana.
+
+
+
+
+
+## Complex Example 5
+
+Input Text:Durante il corso, il professore hanno spiegato un argomento difficile e complesso agli studenti. Alcuni studenti hanno trovato la lezione impegnativa, complicata e non semplice da seguire. Il professore ha ripetuto di nuovo le stesse istruzioni alla fine della lezione. Le regole dell'esame sono state spiegate dal professore, e il professore ha spiegato le regole dell'esame anche sul sito del corso. Gli studenti dovrà consegnare il progetto finale conclusivo entro venerdì.
+
+Expected Output:Durante il corso, il professore ha spiegato un argomento difficile agli studenti. Alcuni studenti hanno trovato la lezione impegnativa da seguire. Il professore ha ripetuto le stesse istruzioni alla fine della lezione. Le regole dell'esame sono state spiegate dal professore anche sul sito del corso. Gli studenti dovranno consegnare il progetto finale entro venerdì.
+
+
+
+
