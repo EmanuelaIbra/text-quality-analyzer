@@ -131,6 +131,11 @@
         background: #fff8e1;
       }
 
+      .issue.synonym {
+        border-left-color: #9c27b0;
+        background: #f3e5f5;
+      }
+
       .issue-title {
         font-weight: bold;
         margin-bottom: 4px;
@@ -147,6 +152,22 @@
         border-radius: 6px;
         padding: 7px;
         margin-top: 5px;
+      }
+
+      .synonym-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-top: 6px;
+      }
+
+      .synonym-tag {
+        background: #9c27b0;
+        color: white;
+        border-radius: 12px;
+        padding: 2px 9px;
+        font-size: 11px;
+        font-weight: bold;
       }
 
       .small {
@@ -185,7 +206,13 @@
       </select>
 
       <button onclick="runAnalysis()">1. Analyze Selected Text</button>
-      <button class="secondary" onclick="runRewrite()">2. Rewrite After Review</button>
+      <button
+        id="rewriteBtn"
+        class="secondary"
+        onclick="runRewrite()"
+        style="display:none;">
+        2. Rewrite After Review
+      </button>
 
       <div id="status" class="status loading" style="display:none;"></div>
     </div>
@@ -212,6 +239,11 @@
         <div class="metric">
           <span id="repeatCount" class="metric-number">0</span>
           Repeated words
+        </div>
+
+        <div class="metric">
+          <span id="synonymCount" class="metric-number">0</span>
+          Synonym pairs
         </div>
 
         <div class="metric">
@@ -244,11 +276,13 @@
 
     <script>
       let latestCandidates = [];
+      let latestDecisionGroups = [];
+      let analysisReady = false;
 
       function setStatus(message, type) {
         const status = document.getElementById("status");
         status.style.display = "block";
-        status.innerHTML = message;
+        status.textContent = message;
         status.className = "status " + type;
       }
 
@@ -258,6 +292,15 @@
 
       function safeObject(value) {
         return value && typeof value === "object" ? value : {};
+      }
+
+      function escapeHtml(value) {
+        return String(value || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
       }
 
       function countObjectKeys(obj) {
@@ -276,9 +319,9 @@
           return (
             "<div class='issue'>" +
               "<div class='issue-title'>Grammar error " + (index + 1) + "</div>" +
-              (wrong ? "<div><b>Detected:</b> " + wrong + "</div>" : "") +
-              (suggestions.length ? "<div><b>Suggestion:</b> " + suggestions.join(", ") + "</div>" : "") +
-              "<div class='muted'>" + (match.message || "") + "</div>" +
+              (wrong ? "<div><b>Detected:</b> " + escapeHtml(wrong) + "</div>" : "") +
+              (suggestions.length ? "<div><b>Suggestion:</b> " + escapeHtml(suggestions.join(", ")) + "</div>" : "") +
+              "<div class='muted'>" + escapeHtml(match.message || "") + "</div>" +
             "</div>"
           );
         }).join("");
@@ -292,9 +335,9 @@
         return pleonasms.map(function(item) {
           return (
             "<div class='issue'>" +
-              "<div class='issue-title'>Pleonasm: " + (item.phrase || "") + "</div>" +
-              "<div><b>Suggested:</b> " + (item.replacement || "") + "</div>" +
-              "<div class='muted'>" + (item.explanation || "") + "</div>" +
+              "<div class='issue-title'>Pleonasm: " + escapeHtml(item.phrase || "") + "</div>" +
+              "<div><b>Suggested:</b> " + escapeHtml(item.replacement || "") + "</div>" +
+              "<div class='muted'>" + escapeHtml(item.explanation || "") + "</div>" +
             "</div>"
           );
         }).join("");
@@ -310,11 +353,157 @@
         return entries.map(function(pair) {
           return (
             "<div class='issue'>" +
-              "<div class='issue-title'>Repeated word: " + pair[0] + "</div>" +
-              "<div>Occurrences: " + pair[1] + "</div>" +
+              "<div class='issue-title'>Repeated word: " + escapeHtml(pair[0]) + "</div>" +
+              "<div>Occurrences: " + escapeHtml(pair[1]) + "</div>" +
             "</div>"
           );
         }).join("");
+      }
+
+      // ---------------------------------------------------------------------------
+      // Synonym repetition
+      // ---------------------------------------------------------------------------
+
+      function groupSynonymsBySentence(synonymPairs) {
+        // Each item: { sentence: "...", pair: ["word_a", "word_b"] }
+        // Group by sentence so all pairs from the same sentence are together.
+        const map = {};
+        const order = [];
+
+        safeArray(synonymPairs).forEach(function(item) {
+          const key = (item.sentence || "").trim();
+          if (!map[key]) {
+            map[key] = [];
+            order.push(key);
+          }
+          if (Array.isArray(item.pair) && item.pair.length === 2) {
+            map[key].push(item.pair);
+          }
+        });
+
+        return order.map(function(sentence) {
+          return { sentence: sentence, pairs: map[sentence] };
+        });
+      }
+
+      function formatSynonymRepetition(synonymPairs) {
+        const pairs = safeArray(synonymPairs);
+
+        if (!pairs.length) {
+          return "<div class='muted'>No synonym repetitions detected.</div>";
+        }
+
+        // Collect all unique words involved across all pairs per sentence
+        const groups = groupSynonymsBySentence(pairs);
+
+        return groups.map(function(group) {
+          // Collect every unique word that appears in any pair for this sentence
+          const wordSet = {};
+          group.pairs.forEach(function(pair) {
+            wordSet[pair[0]] = true;
+            wordSet[pair[1]] = true;
+          });
+          const words = Object.keys(wordSet);
+
+          // Build highlighted sentence: wrap each synonym word in a <mark>
+          let highlightedSentence = escapeHtml(group.sentence);
+          words.forEach(function(word) {
+            const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            const re = new RegExp("(?<![\\w])" + escaped + "(?![\\w])", "gi");
+            highlightedSentence = highlightedSentence.replace(
+              re,
+              "<mark style='background:#e1bee7;border-radius:3px;padding:0 2px;'>" + escapeHtml(word) + "</mark>"
+            );
+          });
+
+          // Tag chips for each unique word
+          const tagHtml = words.map(function(w) {
+            return "<span class='synonym-tag'>" + escapeHtml(w) + "</span>";
+          }).join("");
+
+          // Pair list e.g. "cortese ↔ gentile, cortese ↔ garbato"
+          const pairList = group.pairs.map(function(p) {
+            return escapeHtml(p[0]) + " ↔ " + escapeHtml(p[1]);
+          }).join(", ");
+
+          return (
+            "<div class='issue synonym'>" +
+              "<div class='issue-title'>Synonym repetition</div>" +
+              "<div class='sentence-box' style='background:#fce4ec;border-color:#f48fb1;'>" +
+                highlightedSentence +
+              "</div>" +
+              "<div class='synonym-tags'>" + tagHtml + "</div>" +
+              "<div class='muted' style='margin-top:5px;'>Pairs: " + pairList + "</div>" +
+            "</div>"
+          );
+        }).join("");
+      }
+
+      // ---------------------------------------------------------------------------
+      // Review groups / candidates (unchanged)
+      // ---------------------------------------------------------------------------
+
+      function formatReviewGroups(groups, candidates) {
+        if (groups.length) {
+          const groupedPairIds = {};
+
+          groups.forEach(function(group) {
+            safeArray(group.pairs).forEach(function(pair) {
+              groupedPairIds[pair.id] = true;
+            });
+          });
+
+          const groupHtml = groups.map(function(group, groupIndex) {
+            const hiddenText =
+              group.hidden_sentence_count || group.hidden_pair_count
+                ? "<div class='muted'>More similar items exist in the detailed JSON.</div>"
+                : "";
+
+            const sentenceChoices = safeArray(group.sentences).map(function(sentence, index) {
+              return (
+                "<label>" +
+                  "<input type='radio' name='decision_" + group.id + "' value='keep:" + sentence.id + "'> " +
+                  "Keep sentence " + (index + 1) + ", remove the others" +
+                "</label>" +
+                "<div class='sentence-box'>" + escapeHtml(sentence.text) + "</div>"
+              );
+            }).join("");
+
+            const pairSummary = safeArray(group.pairs).map(function(pair) {
+              return (
+                "<div class='muted'>Similarity " +
+                escapeHtml(pair.similarity) +
+                " (" + escapeHtml(pair.category || "manual_review") + ")</div>"
+              );
+            }).join("");
+
+            return (
+              "<div class='issue warning'>" +
+                "<div class='issue-title'>Review group " + (groupIndex + 1) + "</div>" +
+                "<label><input type='radio' name='decision_" + group.id + "' value='keep_all' checked> Keep all sentences</label>" +
+                sentenceChoices +
+                pairSummary +
+                hiddenText +
+              "</div>"
+            );
+          }).join("");
+
+          const remainingPairs = candidates.filter(function(pair) {
+            return !groupedPairIds[pair.id];
+          });
+
+          if (!remainingPairs.length) {
+            return groupHtml;
+          }
+
+          return (
+            groupHtml +
+            "<div class='label' style='margin-top:12px;'>Additional sentence pairs</div>" +
+            formatDecisionCandidates(remainingPairs)
+          );
+        }
+
+        return formatDecisionCandidates(candidates);
       }
 
       function formatDecisionCandidates(candidates) {
@@ -326,10 +515,10 @@
           return (
             "<div class='issue warning'>" +
               "<div class='issue-title'>Manual review required</div>" +
-              "<div><b>Similarity:</b> " + pair.similarity + "</div>" +
+              "<div><b>Similarity:</b> " + escapeHtml(pair.similarity) + "</div>" +
 
-              "<div class='sentence-box'><b>A:</b> " + pair.sentence_1 + "</div>" +
-              "<div class='sentence-box'><b>B:</b> " + pair.sentence_2 + "</div>" +
+              "<div class='sentence-box'><b>A:</b> " + escapeHtml(pair.sentence_1) + "</div>" +
+              "<div class='sentence-box'><b>B:</b> " + escapeHtml(pair.sentence_2) + "</div>" +
 
               "<label><input type='radio' name='decision_" + pair.id + "' value='keep_1'> Keep A</label><br>" +
               "<label><input type='radio' name='decision_" + pair.id + "' value='keep_2'> Keep B</label><br>" +
@@ -342,9 +531,19 @@
       function collectDecisions() {
         const decisions = {};
 
+        if (latestDecisionGroups.length) {
+          latestDecisionGroups.forEach(function(group) {
+            const radios = document.getElementsByName("decision_" + group.id);
+            for (let i = 0; i < radios.length; i++) {
+              if (radios[i].checked) {
+                decisions[group.id] = radios[i].value;
+              }
+            }
+          });
+        }
+
         latestCandidates.forEach(function(pair) {
           const radios = document.getElementsByName("decision_" + pair.id);
-
           for (let i = 0; i < radios.length; i++) {
             if (radios[i].checked) {
               decisions[pair.id] = radios[i].value;
@@ -355,6 +554,10 @@
         return decisions;
       }
 
+      // ---------------------------------------------------------------------------
+      // Main summary builder
+      // ---------------------------------------------------------------------------
+
       function buildUsefulSummary(result) {
         const repetition = safeObject(result.repetition_analysis);
         const redundancy = safeObject(result.redundancy_report);
@@ -362,13 +565,17 @@
         const grammarMatches = safeArray(result.grammar_matches);
         const pleonasms = safeArray(redundancy.pleonasms);
         const repeatedWords = safeObject(repetition.repeated_words);
+        const synonymPairs = safeArray(repetition.synonym_repetition);
 
+        latestDecisionGroups = safeArray(result.manual_review_groups);
         latestCandidates = safeArray(result.user_choice_candidates);
 
-        document.getElementById("grammarErrorCount").innerHTML = grammarMatches.length;
-        document.getElementById("pleonasmCount").innerHTML = pleonasms.length;
-        document.getElementById("repeatCount").innerHTML = countObjectKeys(repeatedWords);
-        document.getElementById("userChoiceCount").innerHTML = latestCandidates.length;
+        document.getElementById("grammarErrorCount").textContent = grammarMatches.length;
+        document.getElementById("pleonasmCount").textContent = pleonasms.length;
+        document.getElementById("repeatCount").textContent = countObjectKeys(repeatedWords);
+        document.getElementById("synonymCount").textContent = synonymPairs.length;
+        document.getElementById("userChoiceCount").textContent =
+          latestDecisionGroups.length || latestCandidates.length;
 
         let html = "";
 
@@ -381,25 +588,36 @@
         html += "<div class='label' style='margin-top:12px;'>Repeated words</div>";
         html += formatRepeatedWords(repeatedWords);
 
+        html += "<div class='label' style='margin-top:12px;'>Synonym repetitions</div>";
+        html += formatSynonymRepetition(synonymPairs);
+
         html += "<div class='label' style='margin-top:12px;'>Redundant sentence decisions</div>";
-        html += formatDecisionCandidates(latestCandidates);
+        html += formatReviewGroups(latestDecisionGroups, latestCandidates);
 
         document.getElementById("importantIssues").innerHTML = html;
-
-        document.getElementById("details").innerHTML =
-          JSON.stringify(result, null, 2);
+        document.getElementById("details").textContent = JSON.stringify(result, null, 2);
       }
 
+      // ---------------------------------------------------------------------------
+      // Actions
+      // ---------------------------------------------------------------------------
+
       function runAnalysis() {
+        analysisReady = false;
+        document.getElementById("rewriteBtn").style.display = "none";
+        document.getElementById("finalText").value = "";
+
         setStatus("Analyzing selected text...", "loading");
 
         google.script.run
           .withSuccessHandler(function(result) {
-            if (!result.success) {
-              setStatus(result.message, "error");
+            if (!result || !result.success) {
+              setStatus(result?.message || "Analysis failed.", "error");
               return;
             }
 
+            analysisReady = true;
+            document.getElementById("rewriteBtn").style.display = "block";
             setStatus("Analysis complete. Review the issues, then click rewrite.", "success");
 
             document.getElementById("original").value = result.original || "";
@@ -408,12 +626,19 @@
             buildUsefulSummary(result);
           })
           .withFailureHandler(function(error) {
-            setStatus(error.message, "error");
+            analysisReady = false;
+            document.getElementById("rewriteBtn").disabled = true;
+            setStatus(error.message || "Analysis request failed.", "error");
           })
           .analyzeSelectedText();
       }
 
       function runRewrite() {
+        if (!analysisReady) {
+          setStatus("Please run analysis successfully before rewriting.", "error");
+          return;
+        }
+
         setStatus("Rewriting text with selected decisions...", "loading");
 
         const mode = document.getElementById("mode").value;
@@ -421,17 +646,16 @@
 
         google.script.run
           .withSuccessHandler(function(result) {
-            if (!result.success) {
-              setStatus(result.message, "error");
+            if (!result || !result.success) {
+              setStatus(result?.message || "Rewrite failed.", "error");
               return;
             }
 
             setStatus("Rewrite complete. Review the optimized text below.", "success");
-
             document.getElementById("finalText").value = result.final || "";
           })
           .withFailureHandler(function(error) {
-            setStatus(error.message, "error");
+            setStatus(error.message || "Rewrite request failed.", "error");
           })
           .rewriteAfterReview(mode, decisions);
       }
@@ -454,7 +678,6 @@
                   setStatus(result.message, "error");
                   return;
                 }
-
                 setStatus(result.message, "success");
               })
               .withFailureHandler(function(error) {

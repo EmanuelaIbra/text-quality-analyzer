@@ -1,4 +1,7 @@
-const BASE_API_URL = "https://negotiate-resident-swept.ngrok-free.dev";
+const BASE_API_URL = "  ";
+
+
+
 
 function onOpen() {
   DocumentApp.getUi()
@@ -97,10 +100,18 @@ function analyzeSelectedText() {
 }
 
 function rewriteAfterReview(mode, decisions) {
-  const originalText =
-    PropertiesService.getDocumentProperties().getProperty(
-      "latestOriginalText"
-    );
+  
+  const props = PropertiesService.getDocumentProperties();
+
+  const originalText = props.getProperty("latestOriginalText");
+  const latestAnalysisResult = props.getProperty("latestAnalysisResult");
+
+  if (!originalText || !latestAnalysisResult) {
+    return {
+      success: false,
+      message: "No successful analysis found. Please run analysis first."
+    };
+  }
 
   if (!originalText) {
     return {
